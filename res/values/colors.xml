@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- 白色-->
+    <color name="white">#ffffff</color>
+    <!-- 黑色-->
+    <color name="black">#000000</color>
+    
+    
+    <!-- 淡绿色-->
+    <color name="light_green">#50B7DE</color>
+    <!-- 灰色-->
+    <color name="navy_gray">#aeaeae</color>
+    <!-- 浅浅灰色 -->
+    <color name="gray_light">#eaeaea</color>
+     <!-- 浅蓝色-->
+    <color name="navy_blue">#28b9ee</color>
+    <!-- 蓝色 -->
+    <color name="blue_press">#50B7DE</color> 
+    <!-- 绿色 -->
+    <color name="green">#1ABAA5</color>
+    
+    
+    <!-- 提示，删除，退出粉红色背景 -->
+    <color name="pink">#FF8C8C</color>
+    <!-- 黄色，故障 -->
+    <color name="yellow">#FAB466</color>
+    
+</resources>

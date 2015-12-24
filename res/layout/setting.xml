@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_light">
+    
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical" >
+	    
+        <include layout="@layout/top_title"/>
+        
+        
+        <RelativeLayout 
+            android:id="@+id/rl_my_account"
+	   	    android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:background="@drawable/btn_selector_bg" >
+            
+            <com.wicare.wistorm.ui.CircleImageView 
+                android:id="@+id/my_account_logo"
+				android:layout_width="60dp"
+				android:layout_height="60dp"
+				android:layout_centerVertical="true"
+				android:layout_margin="18dp"
+	            android:src="@drawable/ws_ico_people_no" />
+            
+            <TextView 
+                android:id="@+id/tv_sign_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/my_account_logo"
+                android:textSize="@dimen/main"
+                android:textColor="@color/navy"
+                android:text="登陆/注册" />
+  
+           <TextView 
+               android:id="@+id/tv_nickname"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_centerVertical="true"
+               android:layout_toRightOf="@id/my_account_logo"
+               android:textSize="@dimen/main"
+               android:textColor="@color/navy" 
+               android:text="邓肯"
+               android:visibility="gone"/>
+        </RelativeLayout>
+        
+    
+        <View 
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:background="@color/gray_light" />
+    
+	    <RelativeLayout 
+	   	    android:id="@+id/rl_location_city"
+	   	    android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:background="@drawable/btn_selector_bg" >
+	   	    <TextView 
+	   	        android:layout_width="wrap_content"
+	   	        android:layout_height="wrap_content"
+	   	        android:layout_centerVertical="true"
+	   	        android:padding="@dimen/more_fragment_padding"
+	   	        android:textColor="@color/navy"
+	   	        android:textSize="@dimen/content"
+	   	        android:text="定位城市" />
+	   	   <ImageView 
+	   	       android:id="@+id/iv_right"
+	   	       android:layout_width="wrap_content"
+	   	       android:layout_height="wrap_content"
+	   	       android:src="@drawable/ic_next_right"
+	   	       android:layout_alignParentRight="true"
+	   	       android:layout_centerVertical="true"
+	   	       android:padding="@dimen/more_fragment_padding" />
+	   	   <TextView 
+	   	        android:id="@+id/tv_city"
+	   	        android:layout_width="wrap_content"
+	   	        android:layout_height="wrap_content"
+	   	        android:layout_toLeftOf="@id/iv_right"
+	   	        android:layout_centerVertical="true"
+	   	        android:textColor="@color/green"
+	   	        android:textSize="@dimen/content"
+	   	        android:text="深圳"  />
+	   	</RelativeLayout>
+		
+	   	<View 
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="0.5dp"
+	   	    android:background="@color/navy_gray"  />
+	   	
+	   	
+	   	<RelativeLayout 
+	   	    android:id="@+id/rl_about"
+	   	    android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:background="@drawable/btn_selector_bg" >
+	   	    <TextView 
+	   	        android:layout_width="wrap_content"
+	   	        android:layout_height="wrap_content"
+	   	        android:layout_centerVertical="true"
+	   	        android:padding="@dimen/more_fragment_padding"
+	   	        android:textColor="@color/navy"
+	   	        android:textSize="@dimen/content"
+	   	        android:text="关于 Wistorm" />
+	   	   <ImageView 
+	   	       android:layout_width="wrap_content"
+	   	       android:layout_height="wrap_content"
+	   	       android:src="@drawable/ic_next_right"
+	   	       android:layout_alignParentRight="true"
+	   	       android:layout_centerVertical="true"
+	   	       android:padding="@dimen/more_fragment_padding" />
+	   	</RelativeLayout>
+
+    </LinearLayout>
+    
+    <Button 
+        android:id="@+id/btn_exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="退出登陆"
+        android:textColor="@color/white"
+        android:textSize="@dimen/btn_size"
+        android:background="@drawable/btn_selector_red"
+        android:padding="12dp"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+    
+    <include layout="@layout/top_title"/>
+
+	<FrameLayout 
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >        
+    </FrameLayout>
+    
+    <View
+        android:id="@+id/viewLine"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#bebebe" />
+
+    <!-- include 的个数就是 导航栏的个数 -->
+    <com.wicare.wistorm.ui.WTabBar
+        android:id="@+id/tabbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
+        <include layout="@layout/ws_item_tabbar"/>
+        <include layout="@layout/ws_item_tabbar"/>
+        <include layout="@layout/ws_item_tabbar"/>
+        
+    </com.wicare.wistorm.ui.WTabBar>
+    
+    
+    
+</LinearLayout>
