@@ -31,11 +31,11 @@
         android:allowBackup="true"
         android:icon="@drawable/ws_ico_baba"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Light.NoTitleBar" >
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         
         
         <activity
-            android:name=".MainActivity"
+            android:name="com.wicare.wistormpublicdemo.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,24 +44,55 @@
             </intent-filter>
         </activity>
         
+        <!-- 主页 -->
+        <activity android:name="com.wicare.wistormpublicdemo.MainActivity" ></activity>
+        
+		<!-- 注册 -->
+        <activity android:name="com.wicare.wistormpublicdemo.RegisterActivity"></activity>
+        
+        <!-- 忘记密码 -->
+        <activity android:name="com.wicare.wistormpublicdemo.ForgotPasswordActivity"></activity>
+        
+        <!-- 填写验证码 -->
+        <activity android:name="com.wicare.wistormpublicdemo.IdentifyCodeAcitvity"></activity>
+        
+        <!-- 注册信息填写页面 -->
+        <activity android:name="com.wicare.wistormpublicdemo.RegisterInfoActivity"></activity>
+        
+        
         <!-- 设置中心页面 -->
         <activity 
-            android:name="com.wicare.wistormpublicdemo.SettingActivity">
+            android:name="com.wicare.wistormpublicdemo.SettingActivity"
+            android:screenOrientation="portrait" >
         </activity>
         
         <!-- 关于？页面 -->
         <activity 
-            android:name="com.wicare.wistormpublicdemo.AboutApp"> 
+            android:name="com.wicare.wistormpublicdemo.AboutApp"
+            android:screenOrientation="portrait" > 
         </activity>
         
         <!-- 城市选择页面 -->
         <activity 
-            android:name="com.wicare.wistorm.toolkit.WCitySelector">
+            android:name="com.wicare.wistorm.toolkit.WCitySelector"
+            android:screenOrientation="portrait" >
         </activity>
         
         <!-- 消息提醒页面 -->
         <activity 
-            android:name="com.wicare.wistormpublicdemo.ReminderActivity">    
+            android:name="com.wicare.wistormpublicdemo.ReminderActivity" 
+            android:screenOrientation="portrait" >    
+        </activity>
+        
+        <!-- 净化器空气质量等级  -->
+        <activity 
+            android:name="com.wicare.wistormpublicdemo.AirLevelActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/PopupActivity" >
+        </activity>
+        
+        <activity android:name="com.wicare.wistormpublicdemo.AirSettingActivity"
+            android:screenOrientation="portrait" >
         </activity>
         
         <service

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <include layout="@layout/top_title"/>
+    
+    
+    <TextView 
+        android:layout_marginTop="@dimen/bt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/navy"
+        android:text="我们已经发送验证码到以下号码"
+        />
+    
+    <TextView 
+        android:id="@+id/tv_account_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/navy"
+        />
+    
+    
+    <EditText 
+        android:id="@+id/et_identify"
+        android:layout_marginLeft="@dimen/margins"
+        android:layout_marginRight="@dimen/margins"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="@dimen/margins"
+		android:background="@drawable/ico_et_back"
+		android:layout_marginTop="30dp"
+		android:hint="请输入验证码"  />
+    
+    <EditText 
+        android:id="@+id/et_login_pwd"
+        android:layout_marginLeft="@dimen/margins"
+        android:layout_marginRight="@dimen/margins"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="@dimen/margins"
+		android:background="@drawable/ico_et_back"
+		android:layout_marginTop="@dimen/margins"
+		android:hint="请输入登陆密码"  />
+    <EditText 
+        android:id="@+id/et_login_pwd_again"
+        android:layout_marginLeft="@dimen/margins"
+        android:layout_marginRight="@dimen/margins"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="@dimen/margins"
+		android:background="@drawable/ico_et_back"
+		android:layout_marginTop="@dimen/margins"
+		android:hint="请再次输入登陆密码"  />
+    
+    <Button 
+        android:id="@+id/btn_identify"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="@dimen/margins"
+        android:layout_marginRight="@dimen/margins"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="下一步"
+        android:textColor="@color/white"
+        android:textSize="@dimen/btn_size"
+        android:background="@drawable/color_btn_yellow"
+        />
+
+</LinearLayout>

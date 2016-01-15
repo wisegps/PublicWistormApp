@@ -21,7 +21,7 @@ public class ReminderActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.reminder);
+		setContentView(R.layout.activity_reminder);
 		
 		ActivityCollector.addActivity(this);//添加activity进去活动管理
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);

@@ -26,4 +26,9 @@
     <!-- 黄色，故障 -->
     <color name="yellow">#FAB466</color>
     
+    <color name="transparent1">#fa535353</color>
+    <!-- 灰色背景 -->
+    <color name="gray_bg">#F4F6F6</color>
+    <!-- 蓝色，登录 -->
+    <color name="blue_login">#407D8C</color>
 </resources>

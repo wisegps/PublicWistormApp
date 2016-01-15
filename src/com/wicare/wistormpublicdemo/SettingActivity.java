@@ -28,7 +28,7 @@ public class SettingActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		setContentView(R.layout.setting);
+		setContentView(R.layout.activity_setting);
 		ActivityCollector.addActivity(this);//添加activity进去活动管理
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);

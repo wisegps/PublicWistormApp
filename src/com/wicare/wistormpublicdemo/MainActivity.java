@@ -12,6 +12,7 @@ import com.wicare.wistormpublicdemo.fragment.FragmentMap;
 import com.wicare.wistormpublicdemo.fragment.FragmentMore;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -47,6 +48,7 @@ public class MainActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext()); 
         setContentView(R.layout.activity_main);
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);  ////////////////////////////
         fragmentManager = getSupportFragmentManager();
         fragments = new HashMap<String, Fragment>();
         WTabBar ll = (WTabBar) findViewById(R.id.tabbarLayout);
@@ -161,6 +163,12 @@ public class MainActivity extends FragmentActivity{
 	}
 	
 	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		ActivityCollector.removeActivity(this);
+	}
 	
 
 }
