@@ -35,13 +35,14 @@
             android:text="昵称:"  />
         
         <EditText 
-            android:id="@+id/ed_pet_name"
+            android:id="@+id/et_pet_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:padding="@dimen/margins"
             android:background="@drawable/ico_et_back"
             android:layout_marginRight="@dimen/margins"	 
+            android:singleLine="true"
             android:hint="请输入昵称"  />
         
     </LinearLayout>
@@ -172,19 +173,20 @@
 	        	android:layout_weight="2"
 	            android:text="车型:"  />
 		    <TextView
-		        android:id="@+id/tv_model"
+		        android:id="@+id/tv_car_model"
 		        android:layout_width="0dp"
-	            android:layout_height="match_parent"
+	            android:layout_height="wrap_content"
 	            android:layout_weight="3"
 	            android:padding="@dimen/margins"
 	            android:background="@drawable/ico_et_back"
 	            android:layout_marginRight="@dimen/margins"	
+	            android:textColor="@color/navy"
 		        android:text="点击选择车型"/>
 		</LinearLayout>
     
     
     <Button 
-        android:id="@+id/bt_enter_sys"
+        android:id="@+id/btn_enter_sys"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="@dimen/margins"
         android:layout_marginRight="@dimen/margins"

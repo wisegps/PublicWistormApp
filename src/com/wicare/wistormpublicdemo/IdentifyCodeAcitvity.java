@@ -1,11 +1,18 @@
 package com.wicare.wistormpublicdemo;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.wicare.wistorm.http.HttpThread;
+import com.wicare.wistorm.toolkit.SystemTools;
 import com.wicare.wistormpublicdemo.app.Constant;
 import com.wicare.wistormpublicdemo.app.Msg;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
+import com.wicare.wistormpublicdemo.xutil.NetThread;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -42,14 +49,18 @@ public class IdentifyCodeAcitvity extends Activity {
 	private EditText et_pwd_again;
 	/*后台返回的验证码*/
 	private String identify_code = null;
-	
+	/**
+	 * 0 注册 ， 1 修改密码，
+	 */
+	private int mark = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_identify_code);
 		ActivityCollector.addActivity(this);//添加当前活动进行管理
-		findViewById(R.id.btn_identify).setOnClickListener(onClickListener);
+		Button btnIdentify = (Button)findViewById(R.id.btn_identify);
+		btnIdentify.setOnClickListener(onClickListener);
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
@@ -62,6 +73,12 @@ public class IdentifyCodeAcitvity extends Activity {
 		Intent intent = getIntent();
 		isPhone = intent.getBooleanExtra("isPhone", true);
 		account = intent.getStringExtra("account");
+		mark    = intent.getIntExtra("mark", 0);
+		if(mark == 0){
+			btnIdentify.setText("下一步");
+		}else if(mark == 1){
+			btnIdentify.setText("重置密码");
+		}
 		tv_account_num.setText(account);
 		/*获取后台验证码*/
 		getIdentifyCode();
@@ -82,7 +99,7 @@ public class IdentifyCodeAcitvity extends Activity {
 				finish();
 				break;
 			case R.id.btn_identify:
-				
+				submit ();
 				break;
 			}
 		}
@@ -104,6 +121,10 @@ public class IdentifyCodeAcitvity extends Activity {
             	Log.d(TAG, "====获取后台===" + msg.obj.toString());
             	jsonIdentifyCode(msg.obj.toString());
             	break;
+            case Msg.RESRT_ACCOUNT_PWD:
+            	Log.d(TAG, "====获取后台===" + msg.obj.toString());
+            	jsonReset(msg.obj.toString());
+            	break;
             }
         }
     };	
@@ -112,7 +133,7 @@ public class IdentifyCodeAcitvity extends Activity {
     /**
      * 填写好验证码后提交
      */
-    private void Submit (){
+    private void submit (){
     	String strIdentifyCode  = et_identify_code.getText().toString().trim();
     	String strPasswordFirst = et_pwd_first.getText().toString().trim();
     	String strPasswordAgain = et_pwd_again.getText().toString().trim();
@@ -125,11 +146,22 @@ public class IdentifyCodeAcitvity extends Activity {
     		Toast.makeText(IdentifyCodeAcitvity.this, "验证码错误，请重新输入", Toast.LENGTH_SHORT).show();
     		return;
     	}
-    	Intent intent = new Intent(IdentifyCodeAcitvity.this,RegisterInfoActivity.class);
-    	intent.putExtra("password", strPasswordFirst);
-		intent.putExtra("account" , account);
-		intent.putExtra("isPhone" , isPhone);
-    	startActivity(intent);
+    	
+    	if(mark == 0){
+    		Intent intent = new Intent(IdentifyCodeAcitvity.this,RegisterInfoActivity.class);
+        	intent.putExtra("password", strPasswordFirst);
+    		intent.putExtra("account" , account);
+    		intent.putExtra("isPhone" , isPhone);
+        	startActivity(intent);
+    	}else if(mark ==1){
+    		// TODO 重置密码
+			String url = Constant.BaseUrl
+					+ "customer/password/reset?account=" + account
+					+ "&password=" + SystemTools.getM5DEndo(strPasswordFirst);
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			//开启线程获取服务器数据
+			new NetThread.putDataThread(mHandler, url, params, Msg.RESRT_ACCOUNT_PWD).start();
+    	}	
     }
     
     
@@ -163,7 +195,23 @@ public class IdentifyCodeAcitvity extends Activity {
 	}
 	
 	
-	
+	/**
+	 * @param strJson
+	 */
+	private void jsonReset(String strJson) {
+		try {
+			JSONObject jsonObject = new JSONObject(strJson);
+			if (jsonObject.getString("status_code").equals("0")) {
+				setResult(2);
+				finish();
+				Toast.makeText(IdentifyCodeAcitvity.this, "修改成功", Toast.LENGTH_SHORT) .show();
+			} else {
+				Toast.makeText(IdentifyCodeAcitvity.this, "修改失败", Toast.LENGTH_SHORT) .show();
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	protected void onDestroy() {

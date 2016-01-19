@@ -34,6 +34,7 @@
 		android:padding="@dimen/margins"
 		android:background="@drawable/ico_et_back"
 		android:layout_marginTop="30dp"
+		android:singleLine="true"
 		android:hint="请输入验证码"  />
     
     <EditText 
@@ -45,6 +46,8 @@
 		android:padding="@dimen/margins"
 		android:background="@drawable/ico_et_back"
 		android:layout_marginTop="@dimen/margins"
+		android:inputType="textPassword"
+		android:singleLine="true"
 		android:hint="请输入登陆密码"  />
     <EditText 
         android:id="@+id/et_login_pwd_again"
@@ -55,6 +58,8 @@
 		android:padding="@dimen/margins"
 		android:background="@drawable/ico_et_back"
 		android:layout_marginTop="@dimen/margins"
+		android:inputType="textPassword"
+		android:singleLine="true"
 		android:hint="请再次输入登陆密码"  />
     
     <Button 

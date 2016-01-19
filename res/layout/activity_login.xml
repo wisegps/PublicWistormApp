@@ -19,6 +19,7 @@
 		android:padding="@dimen/margins"
 		android:background="@drawable/ico_et_back"
 		android:layout_marginTop="50dp"
+		android:singleLine="true"
 		android:hint="请输入帐号"  />
     
     <EditText 
@@ -30,6 +31,7 @@
 		android:padding="@dimen/margins"
 		android:background="@drawable/ico_et_back"
 		android:layout_marginTop="@dimen/margins"
+		android:singleLine="true"
 		android:hint="请输入密码" />
     
     <RelativeLayout 

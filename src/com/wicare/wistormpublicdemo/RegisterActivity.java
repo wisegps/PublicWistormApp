@@ -48,6 +48,7 @@ public class RegisterActivity extends Activity {
 	/*判断是否是手机号*/
 	boolean isPhone = true;
 	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,7 +79,7 @@ public class RegisterActivity extends Activity {
 				finish();
 				break;
 			case R.id.btn_register:
-				Register();
+				register();
 				break;
 			}
 		}
@@ -133,6 +134,7 @@ public class RegisterActivity extends Activity {
 						Intent i_identify = new Intent(RegisterActivity.this,IdentifyCodeAcitvity.class);
 						i_identify.putExtra("account", account);
 						i_identify.putExtra("isPhone", isPhone);
+						i_identify.putExtra("mark", 0);
 						Log.d(TAG, "====是account存在===" + account);
 						startActivity(i_identify);
 					}
@@ -150,7 +152,7 @@ public class RegisterActivity extends Activity {
 	/**
 	 * 注册 判断帐号是否存在
 	 */
-	private void Register() {
+	private void register() {
 		account = etAccount.getText().toString().trim();
 		String url = Constant.BaseUrl + "exists?query_type=6&value=" + account;
 		if (account.equals("")) {

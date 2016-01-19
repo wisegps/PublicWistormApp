@@ -28,6 +28,7 @@
 	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
 
     <application
+        android:name="com.wicare.wistormpublicdemo.app.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ws_ico_baba"
         android:label="@string/app_name"
@@ -58,6 +59,10 @@
         
         <!-- 注册信息填写页面 -->
         <activity android:name="com.wicare.wistormpublicdemo.RegisterInfoActivity"></activity>
+        
+        
+        <!-- 车辆选择页面 -->
+        <activity android:name="com.wicare.wistorm.toolkit.WCarBrandSelector"></activity>
         
         
         <!-- 设置中心页面 -->

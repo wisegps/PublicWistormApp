@@ -26,7 +26,7 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		ActivityCollector.addActivity(this);//添加当前活动进行管理
+//		ActivityCollector.addActivity(this);//添加当前活动进行管理
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
@@ -76,6 +76,6 @@ public class LoginActivity extends Activity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		ActivityCollector.removeActivity(this);
+//		ActivityCollector.removeActivity(this);
 	}
 }
