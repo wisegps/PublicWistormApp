@@ -246,8 +246,8 @@ public class RegisterInfoActivity extends Activity {
 				String url = Constant.BaseUrl + "customer/" + app.cust_id + "?auth_code=" + app.auth_code;
 				//开启线程获取服务器数据
 				new HttpThread.getDataThread(mHandler, url, Msg.GET_CUSTOMER_INFO).start();
-				Intent intent = new Intent(Constant.Wicare_Login);
-				sendBroadcast(intent);
+//				Intent intent = new Intent(Constant.Wicare_Login);
+//				sendBroadcast(intent);
 			} else {
 				Toast.makeText(RegisterInfoActivity.this, "注册失败，请重试", Toast.LENGTH_SHORT).show();
 			}

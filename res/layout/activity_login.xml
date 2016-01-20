@@ -62,6 +62,18 @@
         
     </RelativeLayout>
     
+    
+    <TextView
+        android:id="@+id/tv_warming"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="账号密码错误!"
+        android:textColor="@color/pink"
+        android:textSize="@dimen/main"
+        android:visibility="gone" />
+    
     <Button 
         android:id="@+id/btn_login"
         android:layout_marginTop="20dp"

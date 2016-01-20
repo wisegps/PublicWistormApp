@@ -32,5 +32,7 @@ public class Constant {
 	
 	/** 登录广播，首页获取车辆用到 */
 	public static String Wicare_Login = "com.wicare.wistormpublicdemo.login";
+	/** 退出登录广播，首页获取车辆用到 */
+	public static String Wicare_Login_Out = "com.wicare.wistormpublicdemo.login_out";
 
 }
