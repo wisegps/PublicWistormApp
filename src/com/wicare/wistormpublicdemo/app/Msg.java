@@ -9,6 +9,9 @@ public class Msg {
 	/** 获取净化器数据 */
 	public static  final int GET_CAR_AIR          = 100;
 	
+	/** 获取净化器数据 */
+	public static  final int LOGIN_UPDATA_UI      = 101;
+	
 	/** 获取帐号是否已经注册 */
 	public static  final int ACCOUNT_IS_EXIST     = 200;
 	
@@ -35,5 +38,26 @@ public class Msg {
 	
 	/** 获取车辆信息  */
 	public static  final int GET_CAR_DATA         = 208;
+	
+	/** 添加车辆  */
+	public static  final int ADD_NEW_CAR          = 300;
+	
+	/** 删除车辆  */
+	public static  final int DELET_CAR            = 301;
+	
+	/** 检查序列号  */
+	public static  final int CHECK_SERIAL         = 302;
+	
+	/** 添加设备  */
+	public static  final int ADD_DEVICE           = 303;
+	
+	/** 更新SIM  */
+	public static  final int UPDATA_SIM           = 304;
+	
+	/** 更新用户  */
+	public static  final int UPDATA_USER          = 305;
+	
+	/** 更新用户  */
+	public static  final int UPDATA_CAR           = 306;
 	
 }

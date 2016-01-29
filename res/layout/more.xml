@@ -5,7 +5,7 @@
     android:background="@color/gray_light"
     android:orientation="vertical" >
     
-    
+<!--     
    	<RelativeLayout 
    	    android:id="@+id/rl_my_msg"
    	    android:layout_width="match_parent"
@@ -31,7 +31,7 @@
    	<View 
    	    android:layout_width="match_parent"
    	    android:layout_height="0.5dp"
-   	    android:background="@color/navy_gray"  />
+   	    android:background="@color/navy_gray"  /> -->
    	
    	<RelativeLayout 
    	    android:id="@+id/rl_my_seting"

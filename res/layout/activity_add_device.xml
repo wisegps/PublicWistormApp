@@ -1,0 +1,217 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <LinearLayout
+        android:id="@+id/ll_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        
+        <include 
+	        android:id="@+id/l_top"
+	        layout="@layout/top_title"/>
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_prompt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/gray_light"
+                    android:padding="@dimen/margins"
+                    android:text="请扫描终端的二维码或者输入对应的序列号进行绑定"
+                    android:textColor="@color/navy"
+                    android:textSize="@dimen/content" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/navy_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/margins" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="序列号:"
+                    android:textColor="@color/navy"
+                    android:textSize="@dimen/content" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <EditText
+                        android:id="@+id/et_serial"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/iv_serial"
+                        android:background="@null"
+                        android:inputType="phone"
+                        android:textColor="@color/navy" />
+                    
+                    <ImageView
+                        android:id="@+id/iv_serial"
+                        android:layout_width="@dimen/title_image"
+                        android:layout_height="@dimen/title_image"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/margins"
+                        android:layout_marginRight="@dimen/margins"
+                        android:background="@drawable/iv_selector"
+                        android:padding="5dp"
+                        android:src="@drawable/ewm" />
+                    
+                    
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/line" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingBottom="14dp"
+                android:paddingLeft="@dimen/margins"
+                android:paddingRight="@dimen/margins"
+                android:paddingTop="14dp" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="SIM卡号:"
+                    android:textColor="@color/navy"
+                    android:textSize="@dimen/content" />
+
+                <EditText
+                    android:id="@+id/et_sim"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:textColor="@color/navy" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/line" />
+
+            <!-- 硬件版本 -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingBottom="14dp"
+                android:paddingLeft="@dimen/margins"
+                android:paddingRight="@dimen/margins"
+                android:paddingTop="14dp" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="硬件版本 :"
+                    android:textColor="@color/navy"
+                    android:textSize="@dimen/content" />
+
+                <EditText
+                    android:id="@+id/et_hardware_version"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:textColor="@color/navy" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/line" />
+
+            <!-- 软件版本 -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingBottom="14dp"
+                android:paddingLeft="@dimen/margins"
+                android:paddingRight="@dimen/margins"
+                android:paddingTop="14dp" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="软件版本:"
+                    android:textColor="@color/navy"
+                    android:textSize="@dimen/content" />
+
+                <EditText
+                    android:id="@+id/et_software_version"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:textColor="@color/navy" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/line" />
+            
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_finish"
+        android:layout_width="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/tv_selector"
+        android:textColor="@color/white"
+        android:text="完成" />
+</RelativeLayout>

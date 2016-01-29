@@ -25,5 +25,7 @@ public class MyApplication extends Application{
 	public String Province = "广东省";
 	/** 车辆信息 **/
 	public List<CarData> carDatas = new ArrayList<CarData>();
+	/** 是否登陆  **/
+	public boolean isLogin = false;
 
 }

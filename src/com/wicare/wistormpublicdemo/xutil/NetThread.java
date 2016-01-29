@@ -8,6 +8,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -142,24 +143,54 @@ public class NetThread {
 			}
 		}
 	}
-//	/**post(非线程)**/
-//	public static String postData(String url,List<NameValuePair> params){
-//		HttpPost httpPost = new HttpPost(url);
-//		try {
-//			 httpPost.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-//			 HttpClient client = new DefaultHttpClient();
-//			 client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 20000);
-//			 client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 20000);
-//			 HttpResponse httpResponse = client.execute(httpPost);
-//			 Log.d(TAG, "状态" +httpResponse.getStatusLine().getStatusCode());
-//			 if(httpResponse.getStatusLine().getStatusCode() == 200){
-//				 String strResult = EntityUtils.toString(httpResponse.getEntity());
-//				 return strResult;	
-//			 }else{					 
-//				 return "";
-//			 }
-//		} catch (Exception e) {
-//			return "";
-//		}
-//	}
+	
+	
+	
+	/**
+	 * @author Wu
+	 *
+	 */
+	public static class DeleteThread extends Thread{
+		Handler handler;
+		String url;
+		int what;		
+		public DeleteThread(Handler handler,String url,int what){
+			this.handler = handler;
+			this.url = url;
+			this.what =what;
+		}
+		@Override
+		public void run() {
+			super.run();
+			try {
+				HttpClient client = new DefaultHttpClient();
+				HttpDelete httpDelete = new HttpDelete(url);
+		        HttpResponse response = client.execute(httpDelete); 
+		        if (response.getStatusLine().getStatusCode()  == 200){
+		        	HttpEntity entity = response.getEntity();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()));
+					StringBuilder sb = new StringBuilder();
+					String line = null;
+					while ((line = reader.readLine()) != null) {
+						sb.append(line);
+					}
+					Message message = new Message();
+					message.what = what;
+					message.obj = sb.toString();
+					handler.sendMessage(message);
+		        }else{
+		        	Message message = new Message();
+					message.what = what;
+					message.obj = "";
+					handler.sendMessage(message);
+		        }
+			} catch (Exception e) {
+				e.printStackTrace();	
+				Message message = new Message();
+				message.what = what;
+				message.obj = "";
+				handler.sendMessage(message);
+			}
+		}
+	}
 }

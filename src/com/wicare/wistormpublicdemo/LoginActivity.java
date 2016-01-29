@@ -53,6 +53,8 @@ public class LoginActivity extends Activity {
 	/*加载框*/
 	private WLoading mWLoading = null;
 	
+	private String loginMsg = "";
+	
 	private MyApplication app;
 	
 	@Override
@@ -72,8 +74,12 @@ public class LoginActivity extends Activity {
 		etAccount  = (EditText)findViewById(R.id.et_account);
 		etPassword = (EditText)findViewById(R.id.et_pwd);
 		etWarming  = (TextView)findViewById(R.id.tv_warming);
+		SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
+		etAccount.setText(preferences.getString(Constant.sp_account, ""));
+		
+		Intent intent = getIntent();
+		loginMsg = intent.getStringExtra("loginMsg");
 	}
-
 	
 	/**
 	 * 点击事件监听
@@ -98,6 +104,7 @@ public class LoginActivity extends Activity {
 			case R.id.btn_login://登陆
 				accountLogin();
 				etWarming.setVisibility(View.GONE);
+				
 				break;
 			}
 		}
@@ -141,11 +148,13 @@ public class LoginActivity extends Activity {
     private void jsonLogin(String strJson){
     	try {
     		JSONObject jsonObject = new JSONObject(strJson);
-    		if(jsonObject.getString("status_code").equals("0")){ 			
+    		if(jsonObject.getString("status_code").equals("0")){
+    			//用户ID
     			app.cust_id   = jsonObject.getString("cust_id");
+    			//授权码
     			app.auth_code = jsonObject.getString("auth_code");
+    			//用户昵称
     			app.cust_name = jsonObject.getString("cust_name");
-    			// 不是演示账号要保存账号密码
 				SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
 				Editor editor = preferences.edit();
 				editor.putString(Constant.sp_account, account);
@@ -175,6 +184,7 @@ public class LoginActivity extends Activity {
 			JSONObject jsonObject = new JSONObject(str);
 			if (jsonObject.opt("status_code") == null) {
 				int cust_type = jsonObject.getInt("cust_type");
+				//用户类型 
 				app.cust_type = cust_type;
 				getCarData();
 			}
@@ -231,14 +241,18 @@ public class LoginActivity extends Activity {
 	private void jsonCarData(String str) {
 		app.carDatas.clear();
 		app.carDatas.addAll(JsonData.jsonCarInfo(str));
-		// 发广播
+		// 发出登录广播信号
 		Intent intent = new Intent(Constant.Wicare_Login);
 		sendBroadcast(intent);
+		app.isLogin = true;
 		stopProgressDialog();
-		
-		Intent intent_main = new Intent(LoginActivity.this,MainActivity.class);
-		startActivity(intent_main);
-		LoginActivity.this.finish();
+		if("signIn".equals(loginMsg)){
+			finish();
+		}else {
+			Intent intent_main = new Intent(LoginActivity.this,MainActivity.class);
+			startActivity(intent_main);
+			LoginActivity.this.finish();
+		}	
 	}
 	
 	/**

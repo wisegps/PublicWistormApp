@@ -37,8 +37,8 @@
                 android:textColor="@color/navy"
                 android:text="登陆/注册" />
   
-           <TextView 
-               android:id="@+id/tv_nickname"
+         <!--   <TextView 
+               android:id="@+id/tv_cust_name"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_centerVertical="true"
@@ -46,7 +46,7 @@
                android:textSize="@dimen/main"
                android:textColor="@color/navy" 
                android:text="邓肯"
-               android:visibility="gone"/>
+               android:visibility="gone"/> -->
         </RelativeLayout>
         
     
@@ -86,7 +86,47 @@
 	   	        android:textSize="@dimen/content"
 	   	        android:text="深圳"  />
 	   	</RelativeLayout>
+
+	    
+	    <View 
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/navy_gray" />
+    
+	    <RelativeLayout 
+	   	    android:id="@+id/rl_my_car"
+	   	    android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:background="@drawable/btn_selector_bg" >
+	   	    <TextView 
+	   	        android:layout_width="wrap_content"
+	   	        android:layout_height="wrap_content"
+	   	        android:layout_centerVertical="true"
+	   	        android:padding="@dimen/more_fragment_padding"
+	   	        android:textColor="@color/navy"
+	   	        android:textSize="@dimen/content"
+	   	        android:text="我的爱车" />
+	   	   <ImageView 
+	   	       android:layout_width="wrap_content"
+	   	       android:layout_height="wrap_content"
+	   	       android:src="@drawable/ic_next_right"
+	   	       android:layout_alignParentRight="true"
+	   	       android:layout_centerVertical="true"
+	   	       android:padding="@dimen/more_fragment_padding" />
+	 <!--   	   <TextView 
+	   	        android:id="@+id/tv_city"
+	   	        android:layout_width="wrap_content"
+	   	        android:layout_height="wrap_content"
+	   	        android:layout_toLeftOf="@id/iv_right"
+	   	        android:layout_centerVertical="true"
+	   	        android:textColor="@color/green"
+	   	        android:textSize="@dimen/content"
+	   	        android:text="深圳"  /> -->
+	   	</RelativeLayout>
 		
+	    
+	    
+	    
 	   	<View 
 	   	    android:layout_width="match_parent"
 	   	    android:layout_height="0.5dp"

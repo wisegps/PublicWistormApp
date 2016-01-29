@@ -26,6 +26,13 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<!-- SD卡读取权限，用户写入离线定位数据-->
 	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
+	
+	<!-- 二维码权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:name="com.wicare.wistormpublicdemo.app.MyApplication"
@@ -61,8 +68,28 @@
         <activity android:name="com.wicare.wistormpublicdemo.RegisterInfoActivity"></activity>
         
         
+        <!-- 我的车辆 页面-->
+        <activity android:name="com.wicare.wistormpublicdemo.MyCarsActivity"></activity>
+        
+        <!-- 添加车辆页面 -->
+        <activity android:name="com.wicare.wistormpublicdemo.CarAddActivity"></activity>
+        
         <!-- 车辆选择页面 -->
         <activity android:name="com.wicare.wistorm.toolkit.WCarBrandSelector"></activity>
+        
+        <!-- 省份缩写 -->
+        <activity android:name="com.wicare.wistormpublicdemo.ShortProvinceActivity"></activity>
+        
+        <!-- 绑定设备页面 -->
+        <activity android:name="com.wicare.wistormpublicdemo.DeviceAddActivity"></activity>
+        
+        <!-- 二维码扫描页面 -->
+        <activity android:name="com.wicare.wistorm.toolkit.WZxingActivity"></activity>
+        
+        
+        <!-- 修改终端页面0 -->
+		<activity android:name="com.wicare.wistormpublicdemo.UpdataDeviceActivity"></activity>
+	        
         
         
         <!-- 设置中心页面 -->
@@ -84,10 +111,10 @@
         </activity>
         
         <!-- 消息提醒页面 -->
-        <activity 
+        <!-- <activity 
             android:name="com.wicare.wistormpublicdemo.ReminderActivity" 
             android:screenOrientation="portrait" >    
-        </activity>
+        </activity> -->
         
         <!-- 净化器空气质量等级  -->
         <activity 

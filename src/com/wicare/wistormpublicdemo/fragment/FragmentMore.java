@@ -30,8 +30,8 @@ public class FragmentMore extends Fragment{
             Bundle savedInstanceState){  
 		
 		View view = inflater.inflate(R.layout.more, container, false); 
-		RelativeLayout rl_myMessage  = (RelativeLayout)view.findViewById(R.id.rl_my_msg);
-		rl_myMessage.setOnClickListener(onClickListener);
+	/*	RelativeLayout rl_myMessage  = (RelativeLayout)view.findViewById(R.id.rl_my_msg);
+		rl_myMessage.setOnClickListener(onClickListener);*/
 		RelativeLayout rl_mySetting  = (RelativeLayout)view.findViewById(R.id.rl_my_seting);
 		rl_mySetting.setOnClickListener(onClickListener);
 		RelativeLayout rl_exitSystem = (RelativeLayout)view.findViewById(R.id.rl_exit_system);
@@ -50,10 +50,10 @@ public class FragmentMore extends Fragment{
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-			case R.id.rl_my_msg://我的信息
+			/*case R.id.rl_my_msg://我的信息
 				Intent i_reminder = new Intent(getActivity(),ReminderActivity.class);
 				startActivity(i_reminder);
-				break;
+				break;*/
 
 			case R.id.rl_my_seting://设置中心
 				Intent i_setting = new Intent(getActivity(),SettingActivity.class);

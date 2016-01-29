@@ -52,7 +52,7 @@ public class RegisterActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_register);
+		setContentView(R.layout.activity_register);	
 		ActivityCollector.addActivity(this);//添加当前活动进行管理
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
