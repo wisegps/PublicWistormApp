@@ -12,6 +12,10 @@ public class Msg {
 	/** 获取净化器数据 */
 	public static  final int LOGIN_UPDATA_UI      = 101;
 	
+	/** 获取汽车GPS信息*/
+	public static  final int GET_CAR_GPS_DATA     = 102;
+	
+	
 	/** 获取帐号是否已经注册 */
 	public static  final int ACCOUNT_IS_EXIST     = 200;
 	

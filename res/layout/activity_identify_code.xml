@@ -72,7 +72,7 @@
         android:text="下一步"
         android:textColor="@color/white"
         android:textSize="@dimen/btn_size"
-        android:background="@drawable/color_btn_yellow"
+        android:background="@drawable/selector_btn_green"
         />
 
 </LinearLayout>

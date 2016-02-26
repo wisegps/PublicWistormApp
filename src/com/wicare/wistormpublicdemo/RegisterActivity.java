@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import org.json.JSONObject;
 
 import com.wicare.wistorm.http.HttpThread;
-import com.wicare.wistorm.toolkit.WCarBrandSelector;
 import com.wicare.wistormpublicdemo.app.Constant;
 import com.wicare.wistormpublicdemo.app.Msg;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;

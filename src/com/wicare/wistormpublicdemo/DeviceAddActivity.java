@@ -8,7 +8,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import com.wicare.wistorm.http.HttpThread;
-import com.wicare.wistorm.toolkit.WCarBrandSelector;
 import com.wicare.wistorm.toolkit.WZxingActivity;
 import com.wicare.wistorm.ui.WLoading;
 import com.wicare.wistormpublicdemo.app.Constant;
@@ -54,8 +53,8 @@ public class DeviceAddActivity extends Activity{
 	private EditText et_hardware_version;
 	/*软件版本*/
 	private EditText et_software_version;
-	/*服务截止*/
-	private EditText et_end_time;
+//	/*服务截止*/
+//	private EditText et_end_time;
 	/*点击扫描二维码获取序列号*/
 	private ImageView iv_serial;
 	/*净化器接口位置提示*/
@@ -70,8 +69,8 @@ public class DeviceAddActivity extends Activity{
 	MyApplication app;
 	
 	private int car_id;
-	private String car_series_id;
-	private String car_series;
+//	private String car_series_id;
+//	private String car_series;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +86,8 @@ public class DeviceAddActivity extends Activity{
 		
 		Intent intent = getIntent();
 		car_id = intent.getIntExtra("car_id", 0);
-		car_series_id = intent.getStringExtra("car_series_id");
-		car_series = intent.getStringExtra("car_series");
+//		car_series_id = intent.getStringExtra("car_series_id");
+//		car_series = intent.getStringExtra("car_series");
 		
 		iv_serial = (ImageView)findViewById(R.id.iv_serial);
 		iv_serial.setOnClickListener(onClickListener);
@@ -365,10 +364,11 @@ public class DeviceAddActivity extends Activity{
 			} else {
 				JSONObject jsonObject = new JSONObject(strJson);
 				String status = jsonObject.getString("status");
-				if (status.equals("0") || status.equals("1")) {
+				//返回字段"status"说明（ 0：未出库 1：已出库 2: 确认收货 3：已激活 ）
+				if (status.equals("3")) {
 					et_sim.setText(jsonObject.getString("sim"));
-				} else if (status.equals("2")) {
-					et_serial.setError("序列号已经使用");
+				} else{
+					et_serial.setError("终端尚未激活");
 				}
 				et_hardware_version.setText(jsonObject.getString("hardware_version"));
 				et_software_version.setText(jsonObject.getString("software_version"));	
@@ -400,7 +400,7 @@ public class DeviceAddActivity extends Activity{
 	 */
 	private void startProgressDialog() {
 		if (mWLoading == null) {
-			mWLoading = WLoading.createDialog(this);
+			mWLoading = WLoading.createDialog(this,WLoading.LARGE_TYPE);
 			mWLoading.setMessage("绑定设备中...");
 		}
 		mWLoading.show();

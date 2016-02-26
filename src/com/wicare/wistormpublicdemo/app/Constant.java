@@ -9,6 +9,8 @@ import android.os.Environment;
  */
 public class Constant {
 	
+	public static boolean IS_DEBUG = true;
+	
 	/** 共用 URL */
 	public static String BaseUrl = "http://api.bibibaba.cn/";
 	

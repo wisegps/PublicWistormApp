@@ -8,9 +8,8 @@ import com.wicare.wistorm.ui.WLoading;
 import com.wicare.wistormpublicdemo.app.Constant;
 import com.wicare.wistormpublicdemo.app.Msg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.model.JsonData;
+import com.wicare.wistormpublicdemo.model.JsonCarData;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -114,7 +113,6 @@ public class LoginActivity extends Activity {
 	/**
      * Handler 处理消息
      */
-	@SuppressLint("HandlerLeak") 
 	private Handler mHandler = new Handler() {
     	
         @Override
@@ -240,7 +238,7 @@ public class LoginActivity extends Activity {
 	/** 解析车辆信息 **/
 	private void jsonCarData(String str) {
 		app.carDatas.clear();
-		app.carDatas.addAll(JsonData.jsonCarInfo(str));
+		app.carDatas.addAll(JsonCarData.jsonCarInfo(str));
 		// 发出登录广播信号
 		Intent intent = new Intent(Constant.Wicare_Login);
 		sendBroadcast(intent);
@@ -260,7 +258,7 @@ public class LoginActivity extends Activity {
 	 */
 	private void startProgressDialog() {
 		if (mWLoading == null) {
-			mWLoading = WLoading.createDialog(this);
+			mWLoading = WLoading.createDialog(this,WLoading.LARGE_TYPE);
 			mWLoading.setMessage("登陆中...");
 		}
 		mWLoading.show();

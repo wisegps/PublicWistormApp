@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.wicare.wistormpublicdemo.MainActivity.OnFinishListener;
 import com.wicare.wistormpublicdemo.R;
-import com.wicare.wistormpublicdemo.ReminderActivity;
 import com.wicare.wistormpublicdemo.SettingActivity;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 

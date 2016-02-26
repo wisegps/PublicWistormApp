@@ -1,4 +1,4 @@
-package com.wicare.wistormpublicdemo;
+/*package com.wicare.wistormpublicdemo;
 
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 
@@ -10,10 +10,10 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
+*//**
  * @author Wu 消息提醒中心
  *
- */
+ *//*
 public class ReminderActivity extends Activity {
 
 	
@@ -32,9 +32,9 @@ public class ReminderActivity extends Activity {
 	}
 	
 	
-	/**
+	*//**
 	 * 点击事件监听
-	 */
+	 *//*
 	OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
@@ -48,12 +48,13 @@ public class ReminderActivity extends Activity {
 	};
 	
 	
-	/* (non-Javadoc)
+	 (non-Javadoc)
 	 * @see android.app.Activity#onDestroy()
-	 */
+	 
 	protected void onDestroy() {
 		super.onDestroy();
 		ActivityCollector.removeActivity(this);
 	};
 
 }
+*/

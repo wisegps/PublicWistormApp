@@ -13,7 +13,7 @@
             android:id="@+id/rl_car"
             android:layout_width="fill_parent"
             android:layout_height="80dp"
-            android:background="@drawable/btn_selector_bg"
+            android:background="@drawable/btn_selector_gray_bg"
             android:paddingLeft="@dimen/margins" >
 
             <Button
@@ -23,7 +23,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/bg_bt_green"
+                android:background="@drawable/selector_btn_green"
                 android:text="绑定智能配件"
                 android:textColor="@color/white"
                 android:textSize="@dimen/main" />
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="1dp"
-                android:background="@drawable/bg_blue_car"
+                android:background="@drawable/selector_btn_blue_"
                 android:gravity="center"
                 android:paddingLeft="@dimen/double_margins"
                 android:paddingRight="@dimen/double_margins"
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="1dp"
-                android:background="@drawable/bg_blue_car"
+                android:background="@drawable/selector_btn_blue_"
                 android:gravity="center"
                 android:paddingLeft="@dimen/double_margins"
                 android:paddingRight="@dimen/double_margins"

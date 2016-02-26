@@ -1,4 +1,4 @@
-package com.wicare.wistormpublicdemo;
+/*package com.wicare.wistormpublicdemo;
 
 import java.util.regex.Pattern;
 
@@ -25,24 +25,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
+*//**
  * @author WU
  *
  * 更新终端信息
- */
+ *//*
 public class UpdataDeviceActivity extends Activity {
 
 	static final String TAG = "UpdataDeviceActivity";
 	private static final int REQUEST_CODE = 2;
 	
 	public static final int  UPDATA_RESULT_CODE = 10;
-	/*帐号输入框*/
+	帐号输入框
 	private EditText etAccount;
-	/*帐号*/
+	帐号
 	private String account;
-	/*判断是否是手机号*/
+	判断是否是手机号
 	boolean isPhone = true;
-	/*修改终端*/
+	修改终端
 	int mark = 1; 
 	
 	@Override
@@ -69,9 +69,9 @@ public class UpdataDeviceActivity extends Activity {
 	}
 	
 	
-	/**
+	*//**
 	 * 点击事件监听
-	 */
+	 *//*
 	OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
@@ -90,9 +90,9 @@ public class UpdataDeviceActivity extends Activity {
 	};
 	
 	
-	/**
+	*//**
      * Handler 处理消息
-     */
+     *//*
 	@SuppressLint("HandlerLeak") 
 	private Handler mHandler = new Handler() {
     	
@@ -110,9 +110,9 @@ public class UpdataDeviceActivity extends Activity {
     };	
     
 	
-	/**
+	*//**
 	 *  判断帐号是否存在
-	 */
+	 *//*
 	private void checkAccount() {
 		account = etAccount.getText().toString().trim();
 		String url = Constant.BaseUrl + "exists?query_type=6&value=" + account;
@@ -134,9 +134,9 @@ public class UpdataDeviceActivity extends Activity {
 	
 	
 	
-	/**
+	*//**
 	 * @param strJson Json 数据
-	 */
+	 *//*
 	private void jsonIsAccountExist(String strJson){
 		try {
 			JSONObject jsonObject = new JSONObject(strJson);
@@ -172,19 +172,19 @@ public class UpdataDeviceActivity extends Activity {
 		
 	}
 	
-	/**
+	*//**
 	 * @param str 判断是否是数字手机号
 	 * @return
-	 */
+	 *//*
 	public static boolean isNumeric(String str) {
 		Pattern pattern = Pattern.compile("[0-9]*");
 		return pattern.matcher(str).matches();
 	}
 
-	/**
+	*//**
 	 * @param str 判断是否是邮箱
 	 * @return
-	 */
+	 *//*
 	public static boolean isEmail(String str) {
 		Pattern pattern = Pattern
 				.compile("^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
@@ -192,3 +192,4 @@ public class UpdataDeviceActivity extends Activity {
 	}
 	
 }
+*/

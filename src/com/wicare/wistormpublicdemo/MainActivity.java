@@ -7,6 +7,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.wicare.wistorm.ui.WTabBar;
 import com.wicare.wistorm.ui.WTabBar.OnTabChangedListener;
 import com.wicare.wistormpublicdemo.R;
+import com.wicare.wistormpublicdemo.app.Constant;
 import com.wicare.wistormpublicdemo.fragment.FragmentHome;
 import com.wicare.wistormpublicdemo.fragment.FragmentMap;
 import com.wicare.wistormpublicdemo.fragment.FragmentMore;
@@ -59,7 +60,7 @@ public class MainActivity extends FragmentActivity{
         showFragment("home");
         titleName.setText(itemNames[0]);
         ActivityCollector.addActivity(this);//添加当前活动进行管理
-        
+         
     }
     
     

@@ -5,15 +5,17 @@ import com.wicare.wistormpublicdemo.AirLevelActivity;
 import com.wicare.wistormpublicdemo.AirSettingActivity;
 import com.wicare.wistormpublicdemo.R;
 import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.MyApplication;
+import com.wicare.wistormpublicdemo.model.CarData;
 import com.wicare.wistormpublicdemo.ui.SwitchImageView;
 import com.wicare.wistormpublicdemo.xutil.HttpAir;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +41,10 @@ public class FragmentHome extends Fragment{
 	private HttpAir httpAir;
 	private boolean isResumed = false;
 	
+	CarData carData;
+	MyApplication app;
+	private Intent intent = null;
+	
 	@Override  
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  
             Bundle savedInstanceState){
@@ -46,6 +52,9 @@ public class FragmentHome extends Fragment{
 		
 		httpAir = new HttpAir(this.getActivity(), uiHander);
 		uiHander = new Handler(handleCallBack);
+		
+		app = (MyApplication)getActivity().getApplication();
+		
 		circleProView = (WCircleProView)view.findViewById(R.id.circle_view);
 		tvAirScore    = (TextView)view.findViewById(R.id.tv_air_score);
 		circleProView.setOnClickListener(onClickListener);
@@ -63,6 +72,12 @@ public class FragmentHome extends Fragment{
     }  
 	
 	
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
+	}
+	
 	
 	/**
 	 * Handler 回调
@@ -73,7 +88,6 @@ public class FragmentHome extends Fragment{
 		public boolean handleMessage(Message msg) {
 		
 			switch (msg.what) {
-			
 			case Msg.GET_CAR_AIR:
 				Log.e(TAG, "---home handleCallBack---");
 				break;
@@ -155,7 +169,7 @@ public class FragmentHome extends Fragment{
 			@Override
 			public void run() {
 				while (isResumed) {
-					httpAir.requestAir(url);
+//					httpAir.requestAir(url);
 					SystemClock.sleep(10000);
 				}
 			}
