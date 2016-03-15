@@ -23,6 +23,10 @@ public class MyApplication extends Application{
 	public String City = "深圳";
 	/** 当前省份 */
 	public String Province = "广东省";
+	
+	public double lat;
+	public double lon;
+	
 	/** 车辆信息 **/
 	public List<CarData> carDatas = new ArrayList<CarData>();
 	/** 是否登陆  **/

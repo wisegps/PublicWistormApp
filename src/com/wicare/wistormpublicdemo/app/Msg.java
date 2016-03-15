@@ -15,6 +15,12 @@ public class Msg {
 	/** 获取汽车GPS信息*/
 	public static  final int GET_CAR_GPS_DATA     = 102;
 	
+	/** 获取OBD信息*/
+	public static  final int GET_OBD_DATA         = 103;
+	
+	/** 设置净化器模式*/
+	public static  final int SET_AIR_MODEL        = 104;
+	
 	
 	/** 获取帐号是否已经注册 */
 	public static  final int ACCOUNT_IS_EXIST     = 200;

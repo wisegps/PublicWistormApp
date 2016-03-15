@@ -16,6 +16,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.wicare.wistormpublicdemo.R;
+import com.wicare.wistormpublicdemo.app.MyApplication;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,14 +34,15 @@ public class FragmentMap extends Fragment{
 	private static final String TAG = "FragmentMap";
 	private MapView mMapView = null; 
 	private BaiduMap mBaiduMap = null;
-	// 定位
+	private MyApplication app;
+	// 手机定位
 	private LocationClient mLocClient;
-	private MyLocationListenner myListener = new MyLocationListenner();
-		
+	private MyLocationListenner myListener = new MyLocationListenner();	
 		
 	@Override  
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  
             Bundle savedInstanceState){  
+		app = (MyApplication)getActivity().getApplication();
 		View view = inflater.inflate(R.layout.map, container, false); 
 		mMapView = (MapView) view.findViewById(R.id.bmapView);
         return view;  
@@ -60,9 +62,8 @@ public class FragmentMap extends Fragment{
 		option.setCoorType("bd09ll"); // 设置坐标类型
 		option.setScanSpan(20000);//10秒更新一次位置
 		mLocClient.setLocOption(option);
-		mLocClient.start();
+		mLocClient.start();		
 	}
-	
 	
 	
 	/**
@@ -93,10 +94,39 @@ public class FragmentMap extends Fragment{
 			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
 					.newMapStatus(mapStatus);
 			mBaiduMap.setMapStatus(mapStatusUpdate);
+			setCarLocationMark();
 		}
 	}
 	
 	
+	LatLng carLatLng;
+	Marker carMarker = null;
+	/**
+	 * 显示 当前车辆位子图标
+	 */
+	private void setCarLocationMark() {
+		try {			
+			carLatLng = new LatLng(app.lat, app.lon);
+			if (carMarker != null) {
+				carMarker.remove();
+			}
+			// 构建Marker图标
+			BitmapDescriptor bitmap = BitmapDescriptorFactory .fromResource(R.drawable.ic_car_mark);
+			// 构建MarkerOption，用于在地图上添加Marker
+			OverlayOptions option = new MarkerOptions().anchor(0.5f, 1.0f)
+					.position(carLatLng).icon(bitmap);
+			// 在地图上添加Marker，并显示
+			carMarker = (Marker) (mBaiduMap.addOverlay(option));
+			MapStatus mapStatus = new MapStatus.Builder().target(
+					carLatLng).build();
+			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
+					.newMapStatus(mapStatus);
+			mBaiduMap.setMapStatus(mapStatusUpdate);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	@Override
@@ -121,4 +151,5 @@ public class FragmentMap extends Fragment{
 		mLocClient.unRegisterLocationListener(myListener);
 		mMapView.onDestroy(); 
 	}
+
 }

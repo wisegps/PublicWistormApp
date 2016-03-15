@@ -44,4 +44,9 @@ public class Constant {
 	/** 车辆更改 */
 	public static String Wicare_Refresh_Car = "com.wicare.wistormpublicdemo.refresh_car";
 	
+	//空气净化器设置运行模式,手工，智能，定时
+	public static final int AIR_MODE_MANUL = 0;
+	public static final int AIR_MODE_SMART = 1;
+	public static final int AIR_MODE_TIMER = 2;
+	
 }
