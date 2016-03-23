@@ -1,11 +1,14 @@
 package com.wicare.wistormpublicdemo.fragment;
 
+import com.wicare.wistorm.api.WAirApi;
+import com.wicare.wistorm.http.BaseVolley;
+import com.wicare.wistorm.http.Msg;
 import com.wicare.wistorm.ui.WCircleProView;
 import com.wicare.wistormpublicdemo.AirLevelActivity;
 import com.wicare.wistormpublicdemo.AirSettingActivity;
 import com.wicare.wistormpublicdemo.R;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.Air;
 import com.wicare.wistormpublicdemo.model.CarData;
@@ -25,7 +28,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * @author Wu  首页净化器
@@ -42,13 +44,17 @@ public class FragmentHome extends Fragment{
 	private TextView tvAirScore;//车内空气质量指数值
 	private Handler uiHander = null;//ui更新
 	private HttpAir httpAir;
+	private WAirApi airApi;
 	private boolean isResumed = false;
 	private View view;
-	
+	private int air_speed_count = 1;
 	private MyApplication app;
 	private CarData carData;
 	private String url;
-	private float battery;
+//	private float battery;
+	private boolean isFirst = true;
+	//设备ID
+	private String device_id = "";
 	
 	@Override  
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  
@@ -56,11 +62,15 @@ public class FragmentHome extends Fragment{
 		view = inflater.inflate(R.layout.home, container, false);  
 		
 		uiHander = new Handler(handleCallBack);
+		airApi   = new WAirApi(uiHander);
+		BaseVolley.init(getActivity());
+		
+		
 		httpAir = new HttpAir(this.getActivity(), uiHander);
 		
 		app = (MyApplication)getActivity().getApplication();
 		carData = app.carDatas.get(0);
-		
+		device_id = carData.getDevice_id();//获得设备ID
 		circleProView = (WCircleProView)view.findViewById(R.id.circle_view);
 		tvAirScore    = (TextView)view.findViewById(R.id.tv_air_score);
 		circleProView.setOnClickListener(onClickListener);
@@ -98,11 +108,24 @@ public class FragmentHome extends Fragment{
 		
 			Bundle bundle = msg.getData();
 			switch (msg.what) {
-			case Msg.GET_OBD_DATA:
+			case HandlerMsg.GET_OBD_DATA:
 				initValue(bundle);
 				break;
-			case Msg.GET_CAR_AIR:
+			case HandlerMsg.GET_CAR_AIR:
 				refreshValue((Air) msg.obj);
+				break;
+				
+			case Msg.SET_AIR_SPEED_COMMAND:
+				Bundle bundle_air_speed = msg.getData();
+				String status_code = bundle_air_speed.getString("status_code");
+//				Log.i(TAG, "设置速度返回信息status_code：" + status_code + "==" + air_speed_count);
+				if("0".equals(status_code)){
+					air_speed_count ++;
+					if(air_speed_count > 3){
+						air_speed_count = 1;
+					}
+				}
+				
 				break;
 			}
 			return true;
@@ -117,24 +140,25 @@ public class FragmentHome extends Fragment{
 	 */
 	public void initValue(Bundle bundle) {
 
-		String battery = bundle.getString("battery");
-		try {
-			this.battery = Float.parseFloat(battery);
-		} catch (Exception e) {
-			this.battery = 0;
-		}
+//		String battery = bundle.getString("battery");
+//		try {
+//			this.battery = Float.parseFloat(battery);
+//		} catch (Exception e) {
+//			this.battery = 0;
+//		}
 		Air mAir = new Air();
 		int airValue = bundle.getInt("air");
 		int airSwitch = bundle.getInt("switch");
 		int airMode = bundle.getInt("air_mode");
 		String airTime = bundle.getString("air_time");
 		int airDuration = bundle.getInt("airDuration");
+		int airSpeed    = bundle.getInt("air_speed");
 		mAir.setAir(airValue);
 		mAir.set_switch(airSwitch);
 		mAir.setAir_mode(airMode);
 		mAir.setAir_duration(airDuration);
 		mAir.setAir_time(airTime);
-
+		mAir.setAirSpeed(airSpeed);
 		refreshValue(mAir);
 	}
 	
@@ -155,22 +179,36 @@ public class FragmentHome extends Fragment{
 				.findViewById(R.id.iv_air_level);
 		SwitchImageView ivAirSetting = (SwitchImageView) v
 				.findViewById(R.id.iv_air_setting);
-		/*
-		 * 开关控制
-		 */
+		
+		int air_speed = air.getAirSpeed();
+		String str_air_speed = "";
+		if(air_speed ==1){
+			str_air_speed = "低速";
+		}else if(air_speed ==2){
+			str_air_speed = "中速";
+		}else{
+			str_air_speed = "高速";
+		}
+		if(isFirst){
+			isFirst = false;
+			if(air_speed > 2){
+				air_speed_count = 1;
+			}else{
+				air_speed_count =  air_speed + 1;
+			}	
+		}
+		Log.i("FragmentHomeAir", "速度: " + str_air_speed + "  现在速度：" + air_speed  + "  下一次速度：" + air_speed_count);
+		/* 开关控制 */
 		int vSwitch = air.get_switch();
 		boolean isChecked = (vSwitch == POWER_ON) ? true : false;
-		Log.i("FragmentHomeAir", "开关控制: " + isChecked);
 		ivAirPower.setChecked(isChecked);
-		
-		
 		int vAirMode = air.air_mode;
-		Log.i("FragmentHomeAir", "模式: " + vAirMode);
 		isChecked = (vAirMode == Constant.AIR_MODE_MANUL) ? false : true;
 		ivAirAuto.setChecked(isChecked);
 		ivAirSetting.setChecked(isChecked);
 
 	}
+	
 	/**
 	 * 点击事件
 	 */
@@ -183,69 +221,66 @@ public class FragmentHome extends Fragment{
 			case R.id.circle_view:
 				Intent i_airLevel = new Intent(FragmentHome.this.getActivity(), AirLevelActivity.class);
 				FragmentHome.this.startActivity(i_airLevel);
-				break;
-			
+				break;			
 			case R.id.iv_air_power:
-				Toast.makeText(getActivity(), battery + "", Toast.LENGTH_SHORT).show();
-			
-				if(battery < 12.0){
-					Toast.makeText(getActivity(), "电瓶电压较低，不能远程开启净化器", Toast.LENGTH_SHORT).show();
-					return;
-				}
 				SwitchImageView ivPower = (SwitchImageView) v;
 				boolean isChecked = ivPower.isChecked();
 				ivPower.setChecked(!isChecked);
-				httpAir.setPower(carData.getDevice_id(),!isChecked);
+				
+				if(!ivPower.isChecked()){
+					airApi.setAirCommand(app.Token, device_id, Msg.AIR_POWER_OFF, Msg.SWITCH_COMMAND_MODEL);
+				}else{
+					airApi.setAirCommand(app.Token, device_id, Msg.AIR_POWER_ON , Msg.SWITCH_COMMAND_MODEL);
+				}
 				break;
-
 			case R.id.iv_air_auto:
 				SwitchImageView ivAuto = (SwitchImageView) v;
 				ivAuto.setChecked(!ivAuto.isChecked());
-				int mode = Constant.AIR_MODE_MANUL;
+				String air_mode = Msg.AIR_NORMAL_MODEL;
 				if (ivAuto.isChecked()) {
-					mode = Constant.AIR_MODE_SMART;
+					air_mode = Msg.AIR_SMART_MODEL;
 				}
-				httpAir.setMode(carData.getDevice_id(), mode, "", 0);
-				break;
-				
+				airApi.setAirCommand(app.Token, device_id, air_mode , Msg.MODEL_SET_COMMAND_MODEL);
+				break;			
 			case R.id.iv_air_setting:
 				Intent i_airSetting = new Intent(FragmentHome.this.getActivity(), AirSettingActivity.class);
 				i_airSetting.putExtra("air_url", url);
 				i_airSetting.putExtra("device_id", carData.getDevice_id());
 				FragmentHome.this.startActivity(i_airSetting);
-				break;
-				
+				break;				
 			case R.id.iv_air_level:
-				SwitchImageView ivLevel = (SwitchImageView) v;
-				ivLevel.setChecked(!ivLevel.isChecked());
-				Toast.makeText(getActivity(), "净化器leavl", Toast.LENGTH_SHORT).show();
-				break;
-				
+				Log.i("FragmentHomeAir", "ddddddd: " + air_speed_count);
+				if(air_speed_count == 1){
+					airApi.setAirCommand(app.Token, device_id, Msg.LOW_SPEED, Msg.SPEED_COMMAND_MODEL);
+				}
+				if(air_speed_count == 2){
+					airApi.setAirCommand(app.Token, device_id, Msg.MIDDLE_SPEED, Msg.SPEED_COMMAND_MODEL);
+				}
+				if(air_speed_count == 3){
+					airApi.setAirCommand(app.Token, device_id, Msg.HIGHT_SPEED, Msg.SPEED_COMMAND_MODEL);
+				}
+				break;			
 			default:
 				break;
 			}
 		}
 	};
 	
-
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();
 		isResumed = true;
 		refreshAir();//更新数据
 		
-	}
-	
+	}	
 
 	@Override
 	public void onPause() {
 		super.onPause();
 		isResumed = false;
 	}
-	
-	
-	
+
 	/**
 	 * 刷新数据 requestAir
 	 */

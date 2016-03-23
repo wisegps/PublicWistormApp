@@ -6,6 +6,8 @@
     <string name="action_settings">Settings</string>
     
     <string name="top_title">标题栏</string>
+    <string name="max_air_timers">最多能添加五个定时</string>
+    
     
     <string-array name="recharge_array">
         <item>一年服务费(50元)</item>

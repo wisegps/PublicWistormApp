@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.wicare.wistorm.http.HttpThread;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 
 import android.annotation.SuppressLint;
@@ -89,7 +89,7 @@ public class ForgotPasswordActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.ACCOUNT_IS_EXIST:
+            case HandlerMsg.ACCOUNT_IS_EXIST:
             	Log.d(TAG, "====是否存在===" + msg.obj.toString());
             	jsonIsExist(msg.obj.toString());
             	break;
@@ -153,11 +153,11 @@ public class ForgotPasswordActivity extends Activity {
 		} else if (account.length() == 11 && isNumeric(account)) {
 			isPhone = true;
 			//开启线程获取服务器数据
-			new HttpThread.getDataThread(mHandler, url, Msg.ACCOUNT_IS_EXIST).start();
+			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ACCOUNT_IS_EXIST).start();
 		} else if (isEmail(account)) {
 			isPhone = false;
 			//开启线程获取服务器数据
-			new HttpThread.getDataThread(mHandler, url, Msg.ACCOUNT_IS_EXIST).start();
+			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ACCOUNT_IS_EXIST).start();
 		} else {
 			Toast.makeText(ForgotPasswordActivity.this, "您输入的账号不正确",
 					Toast.LENGTH_SHORT).show();

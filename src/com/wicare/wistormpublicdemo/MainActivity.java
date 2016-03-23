@@ -7,7 +7,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.wicare.wistorm.ui.WTabBar;
 import com.wicare.wistorm.ui.WTabBar.OnTabChangedListener;
 import com.wicare.wistormpublicdemo.R;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.fragment.FragmentHome;
 import com.wicare.wistormpublicdemo.fragment.FragmentMap;
@@ -93,7 +93,7 @@ public class MainActivity extends FragmentActivity{
 			Bundle bundle = msg.getData();
 			switch (msg.what) {
 			
-			case Msg.GET_CAR_GPS_DATA:
+			case HandlerMsg.GET_CAR_GPS_DATA:
 				app.lon = bundle.getDouble("lon");
 				app.lat = bundle.getDouble("lat");
 				break;

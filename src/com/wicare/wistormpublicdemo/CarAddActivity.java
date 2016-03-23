@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import com.wicare.wistorm.toolkit.WCarBrandSelector;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.CarData;
 import com.wicare.wistormpublicdemo.xutil.NetThread;
@@ -140,7 +140,7 @@ public class CarAddActivity extends Activity{
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.ADD_NEW_CAR:
+            case HandlerMsg.ADD_NEW_CAR:
             	Log.d(TAG, "====提交车辆之后返回的信息===" + msg.obj.toString());
             	jsonAddCar(msg.obj.toString());
             	break;
@@ -213,7 +213,7 @@ public class CarAddActivity extends Activity{
 		params.add(new BasicNameValuePair("car_series_id", car_series_id));
 		params.add(new BasicNameValuePair("car_type_id", car_type_id));
 		
-		new NetThread.postDataThread(mHandler, url, params, Msg.ADD_NEW_CAR).start();
+		new NetThread.postDataThread(mHandler, url, params, HandlerMsg.ADD_NEW_CAR).start();
 
 	}
 	

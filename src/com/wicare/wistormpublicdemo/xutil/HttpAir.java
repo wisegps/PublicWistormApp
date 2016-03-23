@@ -26,7 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.Air;
 
@@ -74,7 +74,7 @@ public class HttpAir {
 		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
 			
-			case Msg.GET_CAR_AIR:
+			case HandlerMsg.GET_CAR_AIR:
 				
 				Log.d(TAG, "---hTTP air handleCallBack---" + msg.obj.toString());
 				// 解析后提交ui线程更新数据
@@ -85,7 +85,7 @@ public class HttpAir {
 				uiHandler.sendMessage(m);
 				break;
 				
-			case Msg.GET_OBD_DATA:
+			case HandlerMsg.GET_OBD_DATA:
 				// 解析后提交ui线程更新数据
 				Bundle bundle = parse(msg.obj.toString());
 				Message m1 = uiHandler.obtainMessage();
@@ -138,7 +138,12 @@ public class HttpAir {
 			int airDuration = jsonParams.optInt("air_duration");
 			budle.putInt("airDuration", airDuration);
 			String air_time = jsonParams.optString("air_time");
+			
+			int airSpeed = jsonParams.optInt("air_speed");
+			budle.putInt("air_speed", airSpeed);
 			budle.putString("air_time", air_time);
+			
+			
 			Log.e("HttpGetData", "airDuration " + airDuration);
 		} catch (JSONException e) {
 			Log.i("HttpGetData", "exception " + e.getMessage());
@@ -177,7 +182,7 @@ public class HttpAir {
 			public void onResponse(String response) {
 				//返回数据，发送到工作子线程去解析
 				Message msg = workHandler.obtainMessage();
-				msg.what = Msg.GET_CAR_AIR;
+				msg.what = HandlerMsg.GET_CAR_AIR;
 				msg.obj = response;
 				workHandler.sendMessage(msg);
 			}
@@ -200,6 +205,7 @@ public class HttpAir {
 	 */
 	private Air paseAir(String response) {
 		Air mAir = new Air();
+		int air_speed=0;
 		int airSwitch = 0, airDuration = 0, airMode = 0,airValue = 0;
 		String airTime = "";
 		try {
@@ -211,7 +217,7 @@ public class HttpAir {
 			airMode = params.optInt("air_mode");
 			airTime = params.optString("air_time");
 			airDuration = params.optInt("air_duration");
-
+			air_speed = params.optInt("air_speed");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -220,6 +226,7 @@ public class HttpAir {
 		mAir.setAir_mode(airMode);
 		mAir.setAir_time(airTime);
 		mAir.setAir_duration(airDuration);
+		mAir.setAirSpeed(air_speed);
 		return mAir;
 	}
 	
@@ -246,7 +253,7 @@ public class HttpAir {
 
 				Log.i("HttpGetData", "response " + response);
 				Message msg = workHandler.obtainMessage();
-				msg.what = Msg.GET_OBD_DATA;
+				msg.what = HandlerMsg.GET_OBD_DATA;
 				msg.obj = response;
 				workHandler.sendMessage(msg);
 			}

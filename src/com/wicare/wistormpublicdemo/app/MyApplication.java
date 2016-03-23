@@ -31,5 +31,8 @@ public class MyApplication extends Application{
 	public List<CarData> carDatas = new ArrayList<CarData>();
 	/** 是否登陆  **/
 	public boolean isLogin = false;
+	
+	
+	public String Token = "";
 
 }

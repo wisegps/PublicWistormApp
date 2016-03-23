@@ -2,11 +2,14 @@ package com.wicare.wistormpublicdemo;
 
 import org.json.JSONObject;
 
+import com.wicare.wistorm.api.WAirApi;
+import com.wicare.wistorm.http.BaseVolley;
 import com.wicare.wistorm.http.HttpThread;
+import com.wicare.wistorm.http.Msg;
 import com.wicare.wistorm.toolkit.SystemTools;
 import com.wicare.wistorm.ui.WLoading;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.JsonCarData;
 
@@ -56,6 +59,9 @@ public class LoginActivity extends Activity {
 	
 	private MyApplication app;
 	
+	private Handler uiHander = null;
+	private WAirApi airApi;//净化器新接口、
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,7 +84,38 @@ public class LoginActivity extends Activity {
 		
 		Intent intent = getIntent();
 		loginMsg = intent.getStringExtra("loginMsg");
+		
+		//实例化传 uiHandler
+		uiHander = new Handler(handleCallBack);
+		airApi = new WAirApi(uiHander);
+		BaseVolley.init(LoginActivity.this);
+		/** 获取token */
+		airApi.getToken("690176725@qq.com", "123456");
 	}
+	
+	
+	/**
+	 * callback
+	 */
+	public Handler.Callback handleCallBack = new Handler.Callback() {
+
+		@Override
+		public boolean handleMessage(Message msg) {
+			
+			switch (msg.what) {
+			case Msg.GET_NEW_API_TOKEN:
+				Bundle bundle = msg.getData();
+				String access_token = bundle.getString("access_token");
+				String valid_time = bundle.getString("valid_time");
+				Log.i(TAG, "返回access_token值：" + access_token);
+				Log.i(TAG, "返回valid_time值：" + valid_time);
+				app.Token = access_token;
+				Toast.makeText(LoginActivity.this, " "+ app.Token, Toast.LENGTH_SHORT).show();
+				break;	
+			}
+			return true;
+		}
+	};
 	
 	/**
 	 * 点击事件监听
@@ -120,17 +157,17 @@ public class LoginActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.ACCOUNT_LOGIN:
+            case HandlerMsg.ACCOUNT_LOGIN:
             	Log.d(TAG, "====登陆信息===" + msg.obj.toString());
             	jsonLogin(msg.obj.toString());
             	break;
             	
-            case Msg.GET_CUSTOMER:
+            case HandlerMsg.GET_CUSTOMER:
             	Log.d(TAG, "====用户信息信息===" + msg.obj.toString());
             	jsonCustomer(msg.obj.toString());
             	break;
             	
-            case Msg.GET_CAR_DATA:
+            case HandlerMsg.GET_CAR_DATA:
             	Log.d(TAG, "====车辆信息===" + msg.obj.toString());
             	jsonCarData(msg.obj.toString());
             	break;
@@ -195,7 +232,7 @@ public class LoginActivity extends Activity {
     /** 获取用户信息 **/
 	private void getCustomer() {
 		String url = Constant.BaseUrl + "customer/" + app.cust_id + "?auth_code=" + app.auth_code;
-		new HttpThread.getDataThread(mHandler, url, Msg.GET_CUSTOMER).start();
+		new HttpThread.getDataThread(mHandler, url, HandlerMsg.GET_CUSTOMER).start();
 	}
 	
 	
@@ -203,7 +240,7 @@ public class LoginActivity extends Activity {
 	private void getCarData() {
 		String url = Constant.BaseUrl + "customer/" + app.cust_id + "/vehicle?auth_code=" + app.auth_code;
 		Log.i("LoginActivity", " 获取车辆信息: "+url);
-		new HttpThread.getDataThread(mHandler, url, Msg.GET_CAR_DATA).start();
+		new HttpThread.getDataThread(mHandler, url, HandlerMsg.GET_CAR_DATA).start();
 	}
 	
 	/** 账号密码登录 **/
@@ -217,7 +254,7 @@ public class LoginActivity extends Activity {
 			}
 			String url = Constant.BaseUrl + "user_login?account=" + account + "&password=" + SystemTools.getM5DEndo(password);
 			Log.i("LoginActivity", url);
-			new HttpThread.getDataThread(mHandler, url, Msg.ACCOUNT_LOGIN).start();
+			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ACCOUNT_LOGIN).start();
 			startProgressDialog();//提示框
 		} else {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(LoginActivity.this);

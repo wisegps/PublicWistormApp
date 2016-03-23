@@ -11,7 +11,7 @@ import com.wicare.wistorm.http.HttpThread;
 import com.wicare.wistorm.toolkit.WZxingActivity;
 import com.wicare.wistorm.ui.WLoading;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.CarData;
 import com.wicare.wistormpublicdemo.xutil.NetThread;
@@ -180,27 +180,27 @@ public class DeviceAddActivity extends Activity{
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.CHECK_SERIAL:
+            case HandlerMsg.CHECK_SERIAL:
             	Log.d(TAG, "====检查序列号是否符合返回的信息===" + msg.obj.toString());
             	jsonSerial(msg.obj.toString());
             	break;
             	
-            case Msg.ADD_DEVICE:
+            case HandlerMsg.ADD_DEVICE:
             	Log.d(TAG, "====添加设备返回的信息===" + msg.obj.toString());
             	jsonAddSerial(msg.obj.toString());
             	break;
             	
-            case Msg.UPDATA_SIM:
+            case HandlerMsg.UPDATA_SIM:
             	Log.d(TAG, "====添加SIM返回的信息===" + msg.obj.toString());
             	jsonUpdataSIM(msg.obj.toString());
             	break;
             	
-            case Msg.UPDATA_USER:
+            case HandlerMsg.UPDATA_USER:
             	Log.d(TAG, "====添加设备到用户返回的信息===" + msg.obj.toString());
             	jsonUpdataUser(msg.obj.toString());
             	break;
             	
-            case Msg.UPDATA_CAR:
+            case HandlerMsg.UPDATA_CAR:
             	stopProgressDialog();
             	updateVariableCarData();//更新数据	
 				Intent intent = new Intent();
@@ -253,7 +253,7 @@ public class DeviceAddActivity extends Activity{
 			et_sim.setError("sim格式不对");
 		} else {		
 			String url = Constant.BaseUrl + "device/serial/" + serial + "?auth_code=" + app.auth_code;
-			new HttpThread.getDataThread(mHandler, url, Msg.ADD_DEVICE).start();
+			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ADD_DEVICE).start();
 			saveDataIn();
 		}
 	}
@@ -277,7 +277,7 @@ public class DeviceAddActivity extends Activity{
 					List<NameValuePair> params = new ArrayList<NameValuePair>();
 					params.add(new BasicNameValuePair("sim", sim));
 					
-					new NetThread.putDataThread(mHandler, url, params, Msg.UPDATA_SIM).start();
+					new NetThread.putDataThread(mHandler, url, params, HandlerMsg.UPDATA_SIM).start();
 				} else {
 					Toast.makeText(DeviceAddActivity.this, "该终端已被其他用户绑定，无法再次绑定", Toast.LENGTH_LONG).show();
 					saveDataOver();
@@ -300,7 +300,7 @@ public class DeviceAddActivity extends Activity{
 						+ app.auth_code;
 				List<NameValuePair> paramSim = new ArrayList<NameValuePair>();
 				paramSim.add(new BasicNameValuePair("cust_id", app.cust_id));
-				new NetThread.putDataThread(mHandler, url_sim, paramSim, Msg.UPDATA_USER).start();
+				new NetThread.putDataThread(mHandler, url_sim, paramSim, HandlerMsg.UPDATA_USER).start();
 			} else {
 				saveDataOver();
 				Toast.makeText(DeviceAddActivity.this, "绑定终端失败", Toast.LENGTH_SHORT).show();
@@ -327,7 +327,7 @@ public class DeviceAddActivity extends Activity{
 				final List<NameValuePair> params = new ArrayList<NameValuePair>();
 				params.add(new BasicNameValuePair("device_id", device_id));
 		
-				new NetThread.putDataThread(mHandler, url, params, Msg.UPDATA_CAR).start();
+				new NetThread.putDataThread(mHandler, url, params, HandlerMsg.UPDATA_CAR).start();
 
 			} else {
 				saveDataOver();
@@ -351,7 +351,7 @@ public class DeviceAddActivity extends Activity{
 		String serial = et_serial.getText().toString().trim();
 		String url = Constant.BaseUrl + "device/serial/" + serial
 				+ "?auth_code=" + app.auth_code;
-		new HttpThread.getDataThread(mHandler, url, Msg.CHECK_SERIAL).start();
+		new HttpThread.getDataThread(mHandler, url, HandlerMsg.CHECK_SERIAL).start();
 	}
 	
 	/**

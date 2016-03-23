@@ -29,6 +29,11 @@ public class Air implements Serializable{
 	 * 定时时间
 	 */
 	public String air_time;
+	/**
+	 * 净化器速度
+	 */
+	public int airSpeed;
+	
 	
 	
 	public int getAir_duration() {
@@ -67,5 +72,12 @@ public class Air implements Serializable{
 	}
 	public void setAir_time(String air_time) {
 		this.air_time = air_time;
+	}
+	
+	public int getAirSpeed() {
+		return airSpeed;
+	}
+	public void setAirSpeed(int airSpeed) {
+		this.airSpeed = airSpeed;
 	}
 }

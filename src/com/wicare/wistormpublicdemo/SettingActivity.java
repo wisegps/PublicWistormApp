@@ -2,7 +2,7 @@ package com.wicare.wistormpublicdemo;
 
 import com.wicare.wistorm.toolkit.WCitySelector;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 
@@ -70,7 +70,7 @@ public class SettingActivity extends Activity {
 		
 		tv_sign = (TextView)findViewById(R.id.tv_sign_in);
 		
-		mHandler.sendEmptyMessage(Msg.LOGIN_UPDATA_UI);
+		mHandler.sendEmptyMessage(HandlerMsg.LOGIN_UPDATA_UI);
 	}
 	
 	
@@ -86,7 +86,7 @@ public class SettingActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.LOGIN_UPDATA_UI:
+            case HandlerMsg.LOGIN_UPDATA_UI:
             	if(app.isLogin){
             		btnLoginOut.setVisibility(View.VISIBLE);
             		tv_sign.setText(app.cust_name);
@@ -162,7 +162,7 @@ public class SettingActivity extends Activity {
 				Intent intent = new Intent(Constant.Wicare_Login_Out);
 				sendBroadcast(intent);
 				app.isLogin = false;
-				mHandler.sendEmptyMessage(Msg.LOGIN_UPDATA_UI);
+				mHandler.sendEmptyMessage(HandlerMsg.LOGIN_UPDATA_UI);
 			}		
 		});
 	}
@@ -186,7 +186,7 @@ public class SettingActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mHandler.sendEmptyMessage(Msg.LOGIN_UPDATA_UI);
+		mHandler.sendEmptyMessage(HandlerMsg.LOGIN_UPDATA_UI);
 	}
 	
 	/* (non-Javadoc)

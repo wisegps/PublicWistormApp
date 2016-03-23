@@ -23,7 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.ActiveGpsData;
 import com.wicare.wistormpublicdemo.model.GpsData;
@@ -68,7 +68,7 @@ public class HttpCarInfo {
 			String response = msg.obj.toString();
 			switch (msg.what) {
 			
-			case Msg.GET_CAR_GPS_DATA:
+			case HandlerMsg.GET_CAR_GPS_DATA:
 				data = parseGps(response);
 				break;
 			}
@@ -98,7 +98,7 @@ public class HttpCarInfo {
 			public void onResponse(String response) {
 				// 返回数据，发送到工作子线程去解析
 				Message msg = workHandler.obtainMessage();
-				msg.what = Msg.GET_CAR_GPS_DATA;
+				msg.what = HandlerMsg.GET_CAR_GPS_DATA;
 				msg.obj = response;
 				workHandler.sendMessage(msg);
 			}

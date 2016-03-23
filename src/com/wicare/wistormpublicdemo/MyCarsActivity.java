@@ -5,7 +5,7 @@ import java.io.File;
 import org.json.JSONObject;
 
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.CarData;
 import com.wicare.wistormpublicdemo.ui.SlidingView;
@@ -224,7 +224,7 @@ public class MyCarsActivity extends Activity{
 			public void onClick(DialogInterface dialog, int which) {
 				String url = Constant.BaseUrl + "vehicle/" + app.carDatas.get(position).getObj_id() 
 							+ "?auth_code=" + app.auth_code;
-				new Thread(new NetThread.DeleteThread(mHandler, url, Msg.DELET_CAR)).start();
+				new Thread(new NetThread.DeleteThread(mHandler, url, HandlerMsg.DELET_CAR)).start();
 			}
 		}).setNegativeButton("否", null);
 		builder.setNegativeButton("取消", null);
@@ -245,7 +245,7 @@ public class MyCarsActivity extends Activity{
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.DELET_CAR:
+            case HandlerMsg.DELET_CAR:
             	Log.d(TAG, "====删除车辆之后返回的信息===" + msg.obj.toString());
             	jsonDelete(msg.obj.toString());
             	break;

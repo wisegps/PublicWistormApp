@@ -12,7 +12,7 @@ import com.wicare.wistorm.http.HttpThread;
 import com.wicare.wistorm.toolkit.SystemTools;
 import com.wicare.wistorm.toolkit.WCarBrandSelector;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 import com.wicare.wistormpublicdemo.xutil.NetThread;
@@ -153,14 +153,14 @@ public class RegisterInfoActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.NAME_IS_EXIST:
+            case HandlerMsg.NAME_IS_EXIST:
             	submitRegisterInfo(msg.obj.toString());
             	break;	
-            case Msg.SUBMIT_REGISTER_INFO:
+            case HandlerMsg.SUBMIT_REGISTER_INFO:
             	Log.d(TAG, "====获取后台===" + msg.obj.toString());
             	jsonSubmitRegisterInfo(msg.obj.toString());
             	break;
-            case Msg.GET_CUSTOMER_INFO:
+            case HandlerMsg.GET_CUSTOMER_INFO:
             	Log.d(TAG, "====获取后台===" + msg.obj.toString());
             	jsonCustomer(msg.obj.toString());
             	break;
@@ -181,7 +181,7 @@ public class RegisterInfoActivity extends Activity {
 		}
 		String url = Constant.BaseUrl + "exists?query_type=5&value=" + cust_name;
 		//开启线程获取服务器数据
-		new HttpThread.getDataThread(mHandler, url, Msg.NAME_IS_EXIST).start();
+		new HttpThread.getDataThread(mHandler, url, HandlerMsg.NAME_IS_EXIST).start();
 	}
 	
 	
@@ -216,7 +216,7 @@ public class RegisterInfoActivity extends Activity {
 				params.add(new BasicNameValuePair("sina_login_id", ""));
 				params.add(new BasicNameValuePair("logo", ""));
 				params.add(new BasicNameValuePair("remark", ""));
-				new NetThread.postDataThread(mHandler, url, params, Msg.SUBMIT_REGISTER_INFO).start();
+				new NetThread.postDataThread(mHandler, url, params, HandlerMsg.SUBMIT_REGISTER_INFO).start();
 			} else {
 				Toast.makeText(RegisterInfoActivity.this, "昵称已存在", Toast.LENGTH_SHORT).show();
 			}
@@ -245,7 +245,7 @@ public class RegisterInfoActivity extends Activity {
 				editor.commit();
 				String url = Constant.BaseUrl + "customer/" + app.cust_id + "?auth_code=" + app.auth_code;
 				//开启线程获取服务器数据
-				new HttpThread.getDataThread(mHandler, url, Msg.GET_CUSTOMER_INFO).start();
+				new HttpThread.getDataThread(mHandler, url, HandlerMsg.GET_CUSTOMER_INFO).start();
 //				Intent intent = new Intent(Constant.Wicare_Login);
 //				sendBroadcast(intent);
 			} else {

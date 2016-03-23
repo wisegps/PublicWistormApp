@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import com.wicare.wistorm.http.HttpThread;
 import com.wicare.wistorm.toolkit.SystemTools;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.Msg;
+import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 import com.wicare.wistormpublicdemo.xutil.NetThread;
 
@@ -117,11 +117,11 @@ public class IdentifyCodeAcitvity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
             
-            case Msg.GET_IDENTIFY_CODE:
+            case HandlerMsg.GET_IDENTIFY_CODE:
             	Log.d(TAG, "====获取后台===" + msg.obj.toString());
             	jsonIdentifyCode(msg.obj.toString());
             	break;
-            case Msg.RESRT_ACCOUNT_PWD:
+            case HandlerMsg.RESRT_ACCOUNT_PWD:
             	Log.d(TAG, "====获取后台===" + msg.obj.toString());
             	jsonReset(msg.obj.toString());
             	break;
@@ -160,7 +160,7 @@ public class IdentifyCodeAcitvity extends Activity {
 					+ "&password=" + SystemTools.getM5DEndo(strPasswordFirst);
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			//开启线程获取服务器数据
-			new NetThread.putDataThread(mHandler, url, params, Msg.RESRT_ACCOUNT_PWD).start();
+			new NetThread.putDataThread(mHandler, url, params, HandlerMsg.RESRT_ACCOUNT_PWD).start();
     	}	
     }
     
@@ -191,7 +191,7 @@ public class IdentifyCodeAcitvity extends Activity {
 			url = Constant.BaseUrl + "valid_code/email?email=" + account + "&type=1";
 		}
 		//开启线程获取服务器数据
-		new HttpThread.getDataThread(mHandler, url, Msg.GET_IDENTIFY_CODE).start();
+		new HttpThread.getDataThread(mHandler, url, HandlerMsg.GET_IDENTIFY_CODE).start();
 	}
 	
 	

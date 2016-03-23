@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white" >
+    
+    <RelativeLayout 
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_margin="15dp">
+    
+	    <ImageView 
+	        android:id="@+id/iv_delete_timer"
+	        android:layout_width="20dp"
+	        android:layout_height="20dp"
+	        android:layout_centerVertical="true"
+	        android:src="@drawable/ico_delete" />
+	    
+	    
+	    <TextView 
+	        android:id="@+id/tv_time"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+	        android:textSize="18sp"
+	        android:text="12:00" />
+	    
+	    <Switch
+	        android:id="@+id/sw_timers"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:switchMinWidth="40dp"
+	        android:textOff=""
+	        android:textOn=""
+	        android:thumb="@drawable/ico_switch_thum"
+	        android:track="@drawable/ico_switch_bg" />
+    </RelativeLayout>
+
+</RelativeLayout>
