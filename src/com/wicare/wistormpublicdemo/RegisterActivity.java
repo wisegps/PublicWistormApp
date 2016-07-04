@@ -3,6 +3,9 @@ package com.wicare.wistormpublicdemo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import xutil.L;
+import xutil.T;
+
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
@@ -12,8 +15,6 @@ import com.wicare.wistorm.http.BaseVolley;
 import com.wicare.wistorm.http.OnFailure;
 import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.ui.WInputField;
-import com.wicare.wistormpublicdemo.xutil.L;
-import com.wicare.wistormpublicdemo.xutil.T;
 
 import android.app.Activity;
 import android.os.Bundle;

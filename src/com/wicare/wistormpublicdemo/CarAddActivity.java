@@ -5,15 +5,15 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import xutil.L;
+import xutil.T;
+
 import com.android.volley.VolleyError;
 import com.wicare.wistorm.api.WVehicleApi;
 import com.wicare.wistorm.http.BaseVolley;
 import com.wicare.wistorm.http.OnFailure;
 import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.WCarBrandSelector;
-import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.xutil.L;
-import com.wicare.wistormpublicdemo.xutil.T;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import application.MyApplication;
 
 /**
  * @author Wu

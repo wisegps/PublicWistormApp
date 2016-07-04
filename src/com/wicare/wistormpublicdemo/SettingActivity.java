@@ -1,10 +1,8 @@
 package com.wicare.wistormpublicdemo;
 
+import xutil.ActivityCollector;
+
 import com.wicare.wistorm.toolkit.WCitySelector;
-import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.HandlerMsg;
-import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,6 +20,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import application.Constant;
+import application.HandlerMsg;
+import application.MyApplication;
 
 /**
  * @author Wu 设置中心页面

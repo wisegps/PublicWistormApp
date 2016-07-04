@@ -1,9 +1,9 @@
 package com.wicare.wistormpublicdemo;
 
+import xutil.ActivityCollector;
 import android.os.Bundle;
 
 import com.wicare.wistorm.toolkit.WAboutApp;
-import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
 
 /**
  * @author Wu 关于页面

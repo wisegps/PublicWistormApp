@@ -31,4 +31,8 @@
     <color name="gray_bg">#F4F6F6</color>
     <!-- 蓝色，登录 -->
     <color name="blue_login">#407D8C</color>
+    
+    
+    <color name="popupwindow_color">#aa000000</color>
+    
 </resources>

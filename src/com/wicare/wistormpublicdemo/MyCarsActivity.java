@@ -3,40 +3,34 @@ package com.wicare.wistormpublicdemo;
 import java.io.File;
 import java.util.HashMap;
 
+import model.CarData;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import widget.SlidingView;
+import xutil.L;
+import xutil.T;
+
 import com.android.volley.VolleyError;
-import com.google.gson.JsonObject;
 import com.wicare.wistorm.api.WVehicleApi;
 import com.wicare.wistorm.http.BaseVolley;
 import com.wicare.wistorm.http.OnFailure;
 import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.ui.WAlertDialog;
-import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.HandlerMsg;
-import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.model.CarData;
-import com.wicare.wistormpublicdemo.ui.SlidingView;
-import com.wicare.wistormpublicdemo.xutil.L;
-import com.wicare.wistormpublicdemo.xutil.NetThread;
-import com.wicare.wistormpublicdemo.xutil.T;
 
-import android.annotation.SuppressLint;
+import de.greenrobot.event.EventBus;
+import eventbrocast.UpdataCarListEvent;
+
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +43,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import application.Constant;
+import application.MyApplication;
 
 /**
  * @author Wu
@@ -62,8 +57,6 @@ public class MyCarsActivity extends Activity{
 	
 	private static final int ADD_CAR_CODE = 2;
 	
-	/*是否刷新*/
-	boolean isRefresh = false;
 	/*车辆列表*/
 	private ListView lv_my_cars;
 	/*APP*/
@@ -96,7 +89,6 @@ public class MyCarsActivity extends Activity{
 		lv_my_cars.setOnItemClickListener(onItemClickListener);
 		
 		init();
-		getVehileList();
 	}
 	/**
 	 * wistorm api接口网络请求初始化
@@ -130,6 +122,7 @@ public class MyCarsActivity extends Activity{
 			
 			case R.id.iv_top_back://返回
 				finish();
+				updataCarList();
 				break;
 			}
 		}
@@ -189,10 +182,6 @@ public class MyCarsActivity extends Activity{
 				}else{
 					cardata.setDevice_id("0");
 				}
-				
-				
-				
-				
 				app.carDatas.add(cardata);
 			}
 			carAdapter.notifyDataSetChanged();
@@ -202,10 +191,6 @@ public class MyCarsActivity extends Activity{
 			L.d(TAG, "错误信息： " + e.toString());
 		}
 	}
-	
-	
-	
-	
 	
 	/**删除车辆，或添加修改终端后，用这个标记删除内存里的数据，不用从网络上获取**/
 	int index;
@@ -297,8 +282,6 @@ public class MyCarsActivity extends Activity{
 		}
 	}
 	
-	
-	
 	/**删除车辆确认**/
 	private void deleteVehicle(final int position) {
 		WAlertDialog.Builder dialog = new WAlertDialog.Builder(mContext);
@@ -352,9 +335,6 @@ public class MyCarsActivity extends Activity{
 		dialog.create().show();
 	}
 
-    
-    
-    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
@@ -364,37 +344,22 @@ public class MyCarsActivity extends Activity{
     	}else if(resultCode == DeviceAddActivity.BIND_RESULT_CODE){
 			T.showShort(mContext, "绑定设备成功！");
     	}
-    	
     }
-    
-    
     
     @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			onBack();
+			updataCarList();
+			finish();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
-    
-    
-	private void onBack() {
-		System.out.println("isRefresh = " + isRefresh);
-		if (isRefresh) {
-			// 发广播
-			Intent intent = new Intent(Constant.Wicare_Refresh_Car);
-			sendBroadcast(intent);
-		}
-		finish();
-	}
-	
-	
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-//		carAdapter.notifyDataSetChanged();//刷新车辆列表
-//	}
-	
+    /**
+     * 刷新首页车辆list
+     */
+    private void updataCarList(){
+    	EventBus.getDefault().post(new UpdataCarListEvent("updata home car list items"));  
+    }
 }

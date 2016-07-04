@@ -3,6 +3,9 @@ package com.wicare.wistormpublicdemo;
 import java.util.HashMap;
 import org.json.JSONObject;
 
+import xutil.L;
+import xutil.T;
+
 import com.android.volley.VolleyError;
 import com.wicare.wistorm.api.WDeviceApi;
 import com.wicare.wistorm.api.WVehicleApi;
@@ -11,9 +14,6 @@ import com.wicare.wistorm.http.OnFailure;
 import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.WZxingActivity;
 import com.wicare.wistorm.ui.WLoading;
-import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.xutil.L;
-import com.wicare.wistormpublicdemo.xutil.T;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import application.MyApplication;
 
 /**
  * @author Wu

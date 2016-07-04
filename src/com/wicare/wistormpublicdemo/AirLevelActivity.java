@@ -3,7 +3,8 @@ package com.wicare.wistormpublicdemo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
+import xutil.ActivityCollector;
+
 
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;

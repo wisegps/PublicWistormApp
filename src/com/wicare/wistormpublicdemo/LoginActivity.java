@@ -1,21 +1,27 @@
 package com.wicare.wistormpublicdemo;
 
+import java.util.HashMap;
+
+import model.CarData;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import xutil.L;
+import xutil.T;
 
 import com.android.volley.VolleyError;
 import com.wicare.wistorm.api.WUserApi;
+import com.wicare.wistorm.api.WVehicleApi;
 import com.wicare.wistorm.http.BaseVolley;
 import com.wicare.wistorm.http.OnFailure;
 import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.SystemTools;
 import com.wicare.wistorm.ui.WInputField;
-import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.xutil.L;
-import com.wicare.wistormpublicdemo.xutil.T;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +31,8 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import application.Constant;
+import application.MyApplication;
 
 public class LoginActivity extends Activity{
 	
@@ -44,13 +52,17 @@ public class LoginActivity extends Activity{
 	public SharedPreferences pref;
 	public SharedPreferences.Editor editor;
 	
+	private Context mContext;
+	private WVehicleApi vehicleApi;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_login);
-
+		mContext = LoginActivity.this;
+		
 		editor = getSharedPreferences(Constant.SP_USER_DATA, MODE_PRIVATE).edit();
     	pref = getSharedPreferences(Constant.SP_USER_DATA, MODE_PRIVATE); 
 
@@ -77,8 +89,9 @@ public class LoginActivity extends Activity{
 	 * wistorm api接口网络请求初始化
 	 */
 	private void init(){
+		vehicleApi = new WVehicleApi();
 		userApi = new WUserApi();
-		BaseVolley.init(LoginActivity.this);
+		BaseVolley.init(mContext);
 	}
 	
 	
@@ -168,8 +181,72 @@ public class LoginActivity extends Activity{
 			L.d(TAG,application.cust_id     + "\n" 
 					+ application.cust_name + "\n" 
 					+ application.access_token);
+			
+			getVehileList();//获取车辆信息
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * 获取车辆信息列表
+	 */
+	private void getVehileList(){
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("access_token", application.access_token);
+//		params.put("seller_id", seller_id);//商户ID  
+		params.put("cust_id", application.cust_id);//不是商户的时候 用 cust_id
+		params.put("sorts", "obj_id");
+		params.put("limit", "-1");
+		String fields = "nick_name,cust_name,car_series,car_brand_id,cust_id,device_id";
+		vehicleApi.list(params, fields, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG, "我的车辆列表信息：" + response);
+				parseVehicleList(response);
+			}
+		}, new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	
+	/**
+	 * @param strJson 
+	 */
+	private void parseVehicleList(String strJson){
+		application.carDatas.clear();
+		try {
+			JSONObject jsonObject =  new JSONObject(strJson);
+			JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
+			
+			for(int i=0;i<jsonArray.length();i++){
+				L.d(TAG, "第  " + i + " 辆车信息：" + jsonArray.get(i).toString());
+				CarData cardata = new CarData();
+//				第  0 辆车信息：{"nick_name":"timm","cust_name":"Dancan","car_series":"奥迪A4","car_brand_id":9,"device_id":0,"obj_id":2884,"cust_id":1219,"mobile":"13537687553"}
+				JSONObject object = new JSONObject(jsonArray.get(i).toString());
+				cardata.setCar_brand_id(object.getString("car_brand_id"));
+				cardata.setCar_serial(object.getString("car_series"));
+				cardata.setNick_name(object.getString("nick_name"));
+				cardata.setObj_id(object.getString("obj_id"));
+				if(object.has("device_id")){
+					cardata.setDevice_id(object.getString("device_id"));
+				}else{
+					cardata.setDevice_id("0");
+				}
+				application.carDatas.add(cardata);
+			}
+			
+			L.d(TAG, "test信息： " + application.carDatas.size());
 			application.isLogin = true;
-		
 			if("signIn".equals(loginMsg)){
 				finish();
 			}else {
@@ -178,8 +255,11 @@ public class LoginActivity extends Activity{
 				LoginActivity.this.finish();
 			}	
 		} catch (Exception e) {
+			// TODO: handle exception
 			e.printStackTrace();
+			L.d(TAG, "错误信息： " + e.toString());
 		}
 	}
+	
 	
 }
