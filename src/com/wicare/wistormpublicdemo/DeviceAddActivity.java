@@ -1,60 +1,51 @@
 package com.wicare.wistormpublicdemo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import java.util.HashMap;
 import org.json.JSONObject;
 
-import com.wicare.wistorm.http.HttpThread;
+import com.android.volley.VolleyError;
+import com.wicare.wistorm.api.WDeviceApi;
+import com.wicare.wistorm.api.WVehicleApi;
+import com.wicare.wistorm.http.BaseVolley;
+import com.wicare.wistorm.http.OnFailure;
+import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.WZxingActivity;
 import com.wicare.wistorm.ui.WLoading;
-import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.model.CarData;
-import com.wicare.wistormpublicdemo.xutil.NetThread;
+import com.wicare.wistormpublicdemo.xutil.L;
+import com.wicare.wistormpublicdemo.xutil.T;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * @author Wu
  * 
- * 绑定设备页面
+ * 绑定设备页面   流程 使用序列号查询设备信息 然后更新设备信息  cust_id 绑定到客户id 下，最后更新车辆信息  绑定到车辆下
  *
  */
 public class DeviceAddActivity extends Activity{
 	
 	static final String TAG = "DeviceAddActivity";
-	
+	private final int REQUEST_ZXING_CODE = 0 ;
+	public static final int BIND_RESULT_CODE   = 2 ;
 	/*序列号*/
 	private EditText et_serial;
-	/*sim卡*/
-	private EditText et_sim;
 	/*硬件版本*/
 	private EditText et_hardware_version;
 	/*软件版本*/
 	private EditText et_software_version;
-//	/*服务截止*/
-//	private EditText et_end_time;
 	/*点击扫描二维码获取序列号*/
 	private ImageView iv_serial;
 	/*净化器接口位置提示*/
@@ -64,13 +55,17 @@ public class DeviceAddActivity extends Activity{
 	/*加载框*/
 	private WLoading mWLoading = null;
 	
-	private String device_id;
+	private MyApplication app;
 	
-	MyApplication app;
+	private String device_id = null; //设备id
+	private String obj_id = null; // 车辆ID
 	
-	private int car_id;
-//	private String car_series_id;
-//	private String car_series;
+	private Context mContext;
+	private WDeviceApi deviceApi;
+	private WVehicleApi vehicleApi;
+	
+	private boolean isCheckDevice = false; // 是否查询了设备信息
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,19 +78,15 @@ public class DeviceAddActivity extends Activity{
 		TextView tvTitle = (TextView) findViewById(R.id.tv_top_title);
 		tvTitle.setText("绑定设备");
 		
-		
 		Intent intent = getIntent();
-		car_id = intent.getIntExtra("car_id", 0);
-//		car_series_id = intent.getStringExtra("car_series_id");
-//		car_series = intent.getStringExtra("car_series");
+		obj_id = intent.getStringExtra("obj_id");
 		
 		iv_serial = (ImageView)findViewById(R.id.iv_serial);
 		iv_serial.setOnClickListener(onClickListener);
 		
 		et_serial = (EditText)findViewById(R.id.et_serial);
-		et_serial.setOnFocusChangeListener(onFocusChangeListener);
-		et_sim = (EditText)findViewById(R.id.et_sim);
-		et_sim.setOnFocusChangeListener(onFocusChangeListener);
+		ImageView iv_search = (ImageView)findViewById(R.id.iv_search);
+		iv_search.setOnClickListener(onClickListener );
 		
 		et_hardware_version = (EditText)findViewById(R.id.et_hardware_version);
 		et_software_version = (EditText)findViewById(R.id.et_software_version);
@@ -111,12 +102,19 @@ public class DeviceAddActivity extends Activity{
 		tv_prompt.setText(sp);
 		tv_prompt.setMovementMethod(LinkMovementMethod.getInstance());
 		//二维码扫描
-		startActivityForResult(new Intent(DeviceAddActivity.this, WZxingActivity.class), 0);
-		
+		startActivityForResult(new Intent(DeviceAddActivity.this, WZxingActivity.class), REQUEST_ZXING_CODE);
+		init();
 	}
 	
 	
-	
+	/**
+	 * 初始化
+	 */
+	private void init(){
+		deviceApi = new WDeviceApi();
+		vehicleApi = new WVehicleApi();
+		BaseVolley.init(mContext);
+	}
 	
 	
 	/**
@@ -133,99 +131,31 @@ public class DeviceAddActivity extends Activity{
 				break;
 				
 			case R.id.iv_serial://二维码扫描
-				startActivityForResult(new Intent(DeviceAddActivity.this, WZxingActivity.class), 0);
+				startActivityForResult(new Intent(DeviceAddActivity.this, WZxingActivity.class), REQUEST_ZXING_CODE);
 				break;
 				
 			case R.id.tv_finish://提交信息
-				addDevice();
-				break;
-			}
-		}
-	};
-	
-	
-	/**
-	 * EditText 监听
-	 */
-	OnFocusChangeListener onFocusChangeListener = new OnFocusChangeListener() {
-
-		@Override
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (!hasFocus) {
-				switch (v.getId()) {
-				case R.id.et_serial:
-					checkSerial();
-					break;
-				case R.id.et_sim:
-					String sim = et_sim.getText().toString().trim();
-					if (sim.length() != 11) {
-						et_sim.setError("sim格式不对");
+				
+				
+				if(isCheckDevice){
+					if(cust_id.equals("0")){
+						bindDevice();
+					}else{
+						T.showShort(DeviceAddActivity.this, "该设备已经被绑定");
 					}
-					break;
+				}else{
+					T.showShort(DeviceAddActivity.this, "请先查询设备信息");
 				}
-			}
-		}
-	};
-	
-	
-	
-	/**
-     * Handler 处理消息
-     */
-	@SuppressLint("HandlerLeak") 
-	private Handler mHandler = new Handler() {
-    	
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-            
-            case HandlerMsg.CHECK_SERIAL:
-            	Log.d(TAG, "====检查序列号是否符合返回的信息===" + msg.obj.toString());
-            	jsonSerial(msg.obj.toString());
-            	break;
-            	
-            case HandlerMsg.ADD_DEVICE:
-            	Log.d(TAG, "====添加设备返回的信息===" + msg.obj.toString());
-            	jsonAddSerial(msg.obj.toString());
-            	break;
-            	
-            case HandlerMsg.UPDATA_SIM:
-            	Log.d(TAG, "====添加SIM返回的信息===" + msg.obj.toString());
-            	jsonUpdataSIM(msg.obj.toString());
-            	break;
-            	
-            case HandlerMsg.UPDATA_USER:
-            	Log.d(TAG, "====添加设备到用户返回的信息===" + msg.obj.toString());
-            	jsonUpdataUser(msg.obj.toString());
-            	break;
-            	
-            case HandlerMsg.UPDATA_CAR:
-            	stopProgressDialog();
-            	updateVariableCarData();//更新数据	
-				Intent intent = new Intent();
-				setResult(1, intent);
-				finish();
-				Intent intent1 = new Intent(Constant.Wicare_Refresh_Car);
-				sendBroadcast(intent1);
-            	break;
-            }
-        }
-    };	
-	
-
-    /**
-	 * 更新内存里的数据
-	 */
-	private void updateVariableCarData() {
-		for (CarData carData : app.carDatas) {
-			if (carData.getObj_id() == Integer.valueOf(car_id)) {
-				carData.setDevice_id(device_id);
-				carData.setSerial(et_serial.getText().toString().trim());
+				
+				
+				break;
+			case R.id.iv_search:
+				getDeviceData(et_serial.getText().toString().trim());
 				break;
 			}
 		}
-	}
+	};
+
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
@@ -236,165 +166,174 @@ public class DeviceAddActivity extends Activity{
 			Bundle bundle = data.getExtras();
 			String scanResult = bundle.getString("result");
 			et_serial.setText(scanResult);
-			checkSerial();
+			getDeviceData(scanResult);
 		}
 	};
 	
 	
-	/**
-	 * 添加设备
-	 */
-	private void addDevice() {
-		String serial = et_serial.getText().toString().trim();
-		String sim = et_sim.getText().toString().trim();
-		if (serial.equals("")) {
-			et_serial.setError("序列号不能为空");
-		} else if (sim.length() != 11) {
-			et_sim.setError("sim格式不对");
-		} else {		
-			String url = Constant.BaseUrl + "device/serial/" + serial + "?auth_code=" + app.auth_code;
-			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ADD_DEVICE).start();
-			saveDataIn();
-		}
-	}
 	
 	/**
-	 * @param strJson 解析添加设备返回的信息
+	 * 获取设备信息
 	 */
-	private void jsonAddSerial(String strJson) {
-
-		try {
-			if (strJson.equals("")) {
-				et_serial.setError("序列号不存在");
-				saveDataOver();
-			} else {
-				JSONObject jsonObject = new JSONObject(strJson);
-				int custID = jsonObject.getInt("cust_id");
-				if (custID == Integer.valueOf(app.cust_id) || custID == 0) {
-					String sim = et_sim.getText().toString().trim();
-					device_id = jsonObject.getString("device_id");
-					String url = Constant.BaseUrl + "device/" + device_id + "/sim?auth_code=" + app.auth_code;
-					List<NameValuePair> params = new ArrayList<NameValuePair>();
-					params.add(new BasicNameValuePair("sim", sim));
-					
-					new NetThread.putDataThread(mHandler, url, params, HandlerMsg.UPDATA_SIM).start();
-				} else {
-					Toast.makeText(DeviceAddActivity.this, "该终端已被其他用户绑定，无法再次绑定", Toast.LENGTH_LONG).show();
-					saveDataOver();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	/**
-	 * @param strJson
-	 */
-	private void jsonUpdataSIM(String strJson){
-		try {
-			String status_code = new JSONObject(strJson) .getString("status_code");
-			if (status_code.equals("0")) {
-				String url_sim = Constant.BaseUrl + "device/" + device_id + "/customer?auth_code="
-						+ app.auth_code;
-				List<NameValuePair> paramSim = new ArrayList<NameValuePair>();
-				paramSim.add(new BasicNameValuePair("cust_id", app.cust_id));
-				new NetThread.putDataThread(mHandler, url_sim, paramSim, HandlerMsg.UPDATA_USER).start();
-			} else {
-				saveDataOver();
-				Toast.makeText(DeviceAddActivity.this, "绑定终端失败", Toast.LENGTH_SHORT).show();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			saveDataOver();
-			Toast.makeText(DeviceAddActivity.this, "绑定终端失败", Toast.LENGTH_SHORT).show();
-		}
-
-	}
-	
-	
-	/**
-	 * @param strJson
-	 */
-	private void jsonUpdataUser(String strJson){
-		try {
-			String status_code = new JSONObject(strJson) .getString("status_code");
-			if (status_code.equals("0")) {
-				// 绑定车辆
-				final String url = Constant.BaseUrl + "vehicle/" + car_id + "/device?auth_code=" + app.auth_code;
-				
-				final List<NameValuePair> params = new ArrayList<NameValuePair>();
-				params.add(new BasicNameValuePair("device_id", device_id));
+	private void getDeviceData(String serial){
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("access_token",app.access_token);
+		params.put("serial",serial);
 		
-				new NetThread.putDataThread(mHandler, url, params, HandlerMsg.UPDATA_CAR).start();
-
-			} else {
-				saveDataOver();
-				Toast.makeText(DeviceAddActivity.this, "绑定终端失败", Toast.LENGTH_SHORT).show();
+		String fields = "device_id,serial,hardware_version,software_version,status,sim,cust_id";
+		
+		deviceApi.get(params, fields, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG, "获取设备返回信息：" + response);
+				parseDeviceData(response);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			saveDataOver();
-			Toast.makeText(DeviceAddActivity.this, "绑定终端失败", Toast.LENGTH_SHORT).show();
-		}
+		}, new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	
 	
-	
-	
 	/**
-	 * 检查序列号是否存在
+	 * 解析返回的设备数据
+	 * 
+	 * @param strJson
 	 */
-	private void checkSerial() {
-		String serial = et_serial.getText().toString().trim();
-		String url = Constant.BaseUrl + "device/serial/" + serial
-				+ "?auth_code=" + app.auth_code;
-		new HttpThread.getDataThread(mHandler, url, HandlerMsg.CHECK_SERIAL).start();
-	}
-	
-	/**
-	 * @param strJson 
-	 */
-	private void jsonSerial(String strJson) {
+	String cust_id;
+	private void parseDeviceData(String strJson){
 		try {
-			if (strJson.equals("")) {
+			if (strJson.contains("htm")) {
 				et_serial.setError("序列号不存在");
 			} else {
 				JSONObject jsonObject = new JSONObject(strJson);
 				String status = jsonObject.getString("status");
+				cust_id = jsonObject.getString("cust_id");
 				//返回字段"status"说明（ 0：未出库 1：已出库 2: 确认收货 3：已激活 ）
-				if (status.equals("3")) {
-					et_sim.setText(jsonObject.getString("sim"));
-				} else{
-					et_serial.setError("终端尚未激活");
+				if (!status.equals("3")) {
+					T.showShort(mContext, "终端尚未激活");
+				} 
+				if(!cust_id.equals("0")){
+					et_serial.setError("设备已经被绑定");
 				}
+				isCheckDevice = true;
+				device_id = jsonObject.getString("device_id");
 				et_hardware_version.setText(jsonObject.getString("hardware_version"));
 				et_software_version.setText(jsonObject.getString("software_version"));	
-			}
+			}	
 		} catch (Exception e) {
+			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
 	
 	
-	private void saveDataIn() {
-		et_serial.setEnabled(false);
-		et_sim.setEnabled(false);
-		iv_serial.setEnabled(false);
-		tv_finish.setEnabled(false);
-		startProgressDialog();
-	}
-
-	private void saveDataOver() {
-		et_serial.setEnabled(true);
-		et_sim.setEnabled(true);
-		iv_serial.setEnabled(true);
-		tv_finish.setEnabled(true);
-		stopProgressDialog();
+	
+	
+	/**
+	 * 绑定设备
+	 */
+	private void bindDevice() {
+		String serial = et_serial.getText().toString().trim();
+		if (serial.equals("") || serial == null) {
+			et_serial.setError("序列号不能为空");
+			return;
+		}else {	
+			startProgressDialog();
+			L.d(TAG, "字段信息 ：" + obj_id + "=========" + device_id + "-----" + app.cust_id);
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("access_token", app.access_token);
+			params.put("_device_id",  device_id);//更改条件就是 obj_id 前面加下划线"_",后面参数不用修改
+			params.put("cust_id", app.cust_id);
+			
+			deviceApi.update(params, "", new OnSuccess() {
+				
+				@Override
+				protected void onSuccess(String response) {
+					// TODO Auto-generated method stub
+					L.e(TAG, "更新设备信息 ："+ response);
+					updataVehicle();
+				}
+			}, new OnFailure() {
+				
+				@Override
+				protected void onFailure(VolleyError error) {
+					// TODO Auto-generated method stub
+					stopProgressDialog();
+				}
+			});	
+		}
 	}
 	
+	/**
+	 * 更新device_id 到 车辆表中   绑定
+	 */
+	private void updataVehicle(){
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("access_token",app.access_token);
+		params.put("_obj_id",  obj_id);//更改条件就是 obj_id 前面加下划线"_",后面参数不用修改
+		params.put("cust_id", app.cust_id);
+		params.put("device_id", device_id);
+		
+		vehicleApi.update(params, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG, "绑定设备返回信息 ：" + response);
+				parseBindDevice(response);
+			}
+		}, new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				T.showShort(mContext, "绑定设备失败！");
+				stopProgressDialog();
+			}
+		});
+	}
+	
+	
+	
+	
+	/**
+	 * 解析绑定设备
+	 * 
+	 * @param strJson {"status_code":0}
+	 */
+	private void parseBindDevice(String strJson){
+		try {
+			
+			JSONObject obj = new JSONObject(strJson);
+			
+			L.d(TAG, "错误信息 ：" + obj.toString());
+			
+			String status =  obj.getString("status_code");
+			
+			if("0".equals(status)){
+				stopProgressDialog();
+				setResult(BIND_RESULT_CODE);
+				finish();
+			}else{
+				T.showShort(mContext, "绑定设备失败！");
+				stopProgressDialog();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			stopProgressDialog();
+		}
+	}
+	
+
 	/**
 	 * 开始显示加载
 	 */

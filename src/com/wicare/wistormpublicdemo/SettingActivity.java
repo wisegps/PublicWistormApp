@@ -151,10 +151,10 @@ public class SettingActivity extends Activity {
 		mHandler.post(new Runnable(){
 			@Override
 			public void run() {
-				SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
+				SharedPreferences preferences = getSharedPreferences(Constant.SP_USER_DATA, Context.MODE_PRIVATE);
 				Editor editor = preferences.edit();
-				editor.putString(Constant.sp_pwd, "");
-				editor.putString(Constant.sp_account, "");
+				editor.putString(Constant.SP_PWD, "");
+				editor.putString(Constant.SP_ACCOUNT, "");
 				editor.commit();
 				app.cust_id = null;
 				app.auth_code = null;

@@ -2,318 +2,184 @@ package com.wicare.wistormpublicdemo;
 
 import org.json.JSONObject;
 
-import com.wicare.wistorm.api.WAirApi;
+import com.android.volley.VolleyError;
+import com.wicare.wistorm.api.WUserApi;
 import com.wicare.wistorm.http.BaseVolley;
-import com.wicare.wistorm.http.HttpThread;
-import com.wicare.wistorm.http.Msg;
+import com.wicare.wistorm.http.OnFailure;
+import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.SystemTools;
-import com.wicare.wistorm.ui.WLoading;
+import com.wicare.wistorm.ui.WInputField;
 import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.model.JsonCarData;
+import com.wicare.wistormpublicdemo.xutil.L;
+import com.wicare.wistormpublicdemo.xutil.T;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-/**
- * @author Wu
- * 
- *  登陆页面
- */
-public class LoginActivity extends Activity {
-
-	static final String TAG = "LoginActivity";
-	/*登陆*/
+public class LoginActivity extends Activity{
+	
+	private static final String TAG = "LoginActivity";
+	private WInputField edAccount;
+	private WInputField edPassword;
 	private Button btnLogin;
-	/*帐号输入*/
-	private EditText etAccount;
-	/*密码输入*/
-	private EditText etPassword;
-	/*警告*/
-	private TextView etWarming;
-	/*帐号*/
+	private TextView tvUpdataPassword;
+	private TextView tvRegister;
+	
 	private String account;
-	/*密码*/
 	private String password;
-	/*加载框*/
-	private WLoading mWLoading = null;
-	
 	private String loginMsg = "";
+	public WUserApi userApi;
+	public MyApplication application;
 	
-	private MyApplication app;
+	public SharedPreferences pref;
+	public SharedPreferences.Editor editor;
 	
-	private Handler uiHander = null;
-	private WAirApi airApi;//净化器新接口、
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_login);
-		app = (MyApplication)getApplication();
-		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
-		ivBack.setVisibility(View.VISIBLE);
-		ivBack.setOnClickListener(onClickListener);
+
+		editor = getSharedPreferences(Constant.SP_USER_DATA, MODE_PRIVATE).edit();
+    	pref = getSharedPreferences(Constant.SP_USER_DATA, MODE_PRIVATE); 
+
 		TextView tvTitle = (TextView) findViewById(R.id.tv_top_title);
 		tvTitle.setText("登陆");
-		findViewById(R.id.tv_register).setOnClickListener(onClickListener);
-		findViewById(R.id.tv_forgot_password).setOnClickListener(onClickListener);
-		btnLogin = (Button)findViewById(R.id.btn_login);
+    	
+		application = (MyApplication)getApplication();
+		edAccount  = (WInputField)findViewById(R.id.ed_account);
+		edPassword = (WInputField)findViewById(R.id.ed_password);
+		btnLogin   = (Button)findViewById(R.id.btn_login);
+		tvUpdataPassword = (TextView)findViewById(R.id.tv_password);
+		tvRegister = (TextView)findViewById(R.id.tv_register);		
 		btnLogin.setOnClickListener(onClickListener);
-		etAccount  = (EditText)findViewById(R.id.et_account);
-		etPassword = (EditText)findViewById(R.id.et_pwd);
-		etWarming  = (TextView)findViewById(R.id.tv_warming);
-		SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
-		etAccount.setText(preferences.getString(Constant.sp_account, ""));
-		
+		tvUpdataPassword.setOnClickListener(onClickListener);
+		tvRegister.setOnClickListener(onClickListener);
+		edAccount.setText(pref.getString(Constant.SP_ACCOUNT,""));
+		init();
 		Intent intent = getIntent();
 		loginMsg = intent.getStringExtra("loginMsg");
-		
-		//实例化传 uiHandler
-		uiHander = new Handler(handleCallBack);
-		airApi = new WAirApi(uiHander);
-		BaseVolley.init(LoginActivity.this);
-		/** 获取token */
-		airApi.getToken("690176725@qq.com", "123456");
 	}
 	
 	
 	/**
-	 * callback
+	 * wistorm api接口网络请求初始化
 	 */
-	public Handler.Callback handleCallBack = new Handler.Callback() {
-
-		@Override
-		public boolean handleMessage(Message msg) {
-			
-			switch (msg.what) {
-			case Msg.GET_NEW_API_TOKEN:
-				Bundle bundle = msg.getData();
-				String access_token = bundle.getString("access_token");
-				String valid_time = bundle.getString("valid_time");
-				Log.i(TAG, "返回access_token值：" + access_token);
-				Log.i(TAG, "返回valid_time值：" + valid_time);
-				app.Token = access_token;
-				Toast.makeText(LoginActivity.this, " "+ app.Token, Toast.LENGTH_SHORT).show();
-				break;	
-			}
-			return true;
-		}
-	};
+	private void init(){
+		userApi = new WUserApi();
+		BaseVolley.init(LoginActivity.this);
+	}
+	
 	
 	/**
-	 * 点击事件监听
+	 * OnClickListener
 	 */
 	OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
+			// TODO Auto-generated method stub
 			switch (v.getId()) {
-				
-			case R.id.iv_top_back://返回
-				finish();
-				break;			
-			case R.id.tv_register://注册
-				Intent i_register = new Intent(LoginActivity.this,RegisterActivity.class);
-				startActivity(i_register);
-				break;	
-			case R.id.tv_forgot_password://忘记密码
-				Intent i_forgot_pwd = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
-				startActivity(i_forgot_pwd);
+			case R.id.btn_login:
+				if(SystemTools.isNetworkAvailable(LoginActivity.this)){
+					login();
+				}else{
+					AlertDialog.Builder dialog = new AlertDialog.Builder(LoginActivity.this);
+					dialog.setTitle("提示");
+					dialog.setMessage("当前网络未连接");
+					dialog.setPositiveButton("去打开", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							startActivity(new Intent("android.settings.WIFI_SETTINGS"));
+						}
+					});
+					dialog.setNegativeButton("取消", null);
+					dialog.show();
+				}
 				break;
-			case R.id.btn_login://登陆
-				accountLogin();
-				etWarming.setVisibility(View.GONE);
+			case R.id.tv_password:
+				Intent intent_password = new Intent(LoginActivity.this,UpdataPasswordActivity.class);
+				startActivity(intent_password);
+				break;
 				
+			case R.id.tv_register:
+				Intent intent_register = new Intent(LoginActivity.this,RegisterActivity.class);
+				startActivity(intent_register);
 				break;
 			}
 		}
 	};
-	
-	
-	/**
-     * Handler 处理消息
-     */
-	private Handler mHandler = new Handler() {
-    	
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-            
-            case HandlerMsg.ACCOUNT_LOGIN:
-            	Log.d(TAG, "====登陆信息===" + msg.obj.toString());
-            	jsonLogin(msg.obj.toString());
-            	break;
-            	
-            case HandlerMsg.GET_CUSTOMER:
-            	Log.d(TAG, "====用户信息信息===" + msg.obj.toString());
-            	jsonCustomer(msg.obj.toString());
-            	break;
-            	
-            case HandlerMsg.GET_CAR_DATA:
-            	Log.d(TAG, "====车辆信息===" + msg.obj.toString());
-            	jsonCarData(msg.obj.toString());
-            	break;
-            }
-        }
-    };	
-    
-    
-    
-    /**
-     * @param strJson  解析登陆信息
-     */
-    private void jsonLogin(String strJson){
-    	try {
-    		JSONObject jsonObject = new JSONObject(strJson);
-    		if(jsonObject.getString("status_code").equals("0")){
-    			//用户ID
-    			app.cust_id   = jsonObject.getString("cust_id");
-    			//授权码
-    			app.auth_code = jsonObject.getString("auth_code");
-    			//用户昵称
-    			app.cust_name = jsonObject.getString("cust_name");
-				SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
-				Editor editor = preferences.edit();
-				editor.putString(Constant.sp_account, account);
-				editor.putString(Constant.sp_pwd, SystemTools.getM5DEndo(password));
-				editor.commit();
-				getCustomer();
-    		}else{
-    			etWarming.setVisibility(View.VISIBLE);
-    			stopProgressDialog();
-    		}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-    }
-	
 
+	
+	
 	/**
-	 * @param str 解析个人信息
+	 * login
 	 */
-	private void jsonCustomer(String str) {
-		SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
-		// 按sp_customer+id的格式保存，可以保存多个登录的信息
-		Editor editor = preferences.edit();
-		editor.putString(Constant.sp_customer + app.cust_id, str);
-		editor.commit();
+	private void login(){
+		account  = edAccount.getText() .toString().trim();
+		password = edPassword.getText().toString().trim();
+		if("".equals(account) || "".equals(password)){
+			T.showShort(LoginActivity.this, "账号或者密码不能为空");
+			return;
+		}
+		editor.putString(Constant.SP_ACCOUNT, account);
+		editor.putString(Constant.SP_PWD, password);
+    	editor.commit();
+    	userApi.login(account, password, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+//				{"status_code":0,"cust_id":1219,"cust_name":"Dancan","access_token":"f1b3afaf9bbedfcb0ca3f0465a1d2e7e157c1ea55ad8d2dbcaa7083d125d360c20e75f99257980957f3220a23c5df2b6","valid_time":"2016-07-01T11:01:14.677Z"}
+				parseLogin(response);
+			}
+		},new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	/**
+	 * @param strJson
+	 */
+	private void parseLogin(String strJson){
+		L.d(TAG,"=======" + strJson);	
 		try {
-			JSONObject jsonObject = new JSONObject(str);
-			if (jsonObject.opt("status_code") == null) {
-				int cust_type = jsonObject.getInt("cust_type");
-				//用户类型 
-				app.cust_type = cust_type;
-				getCarData();
-			}
+			JSONObject object = new JSONObject(strJson);			
+			application.access_token = object.getString("access_token");
+			application.cust_id      = object.getString("cust_id");
+			application.cust_name    = object.getString("cust_name");
+			
+			L.d(TAG,application.cust_id     + "\n" 
+					+ application.cust_name + "\n" 
+					+ application.access_token);
+			application.isLogin = true;
+		
+			if("signIn".equals(loginMsg)){
+				finish();
+			}else {
+				Intent intent_main = new Intent(LoginActivity.this,MainActivity.class);
+				startActivity(intent_main);
+				LoginActivity.this.finish();
+			}	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-    
-    /** 获取用户信息 **/
-	private void getCustomer() {
-		String url = Constant.BaseUrl + "customer/" + app.cust_id + "?auth_code=" + app.auth_code;
-		new HttpThread.getDataThread(mHandler, url, HandlerMsg.GET_CUSTOMER).start();
-	}
-	
-	
-	/** 获取车辆信息 **/
-	private void getCarData() {
-		String url = Constant.BaseUrl + "customer/" + app.cust_id + "/vehicle?auth_code=" + app.auth_code;
-		Log.i("LoginActivity", " 获取车辆信息: "+url);
-		new HttpThread.getDataThread(mHandler, url, HandlerMsg.GET_CAR_DATA).start();
-	}
-	
-	/** 账号密码登录 **/
-	private void accountLogin() {
-		if (SystemTools.isNetworkAvailable(LoginActivity.this)) {
-			account  = etAccount.getText().toString().trim();
-			password = etPassword.getText().toString().trim();
-			if (account.equals("") || password.equals("")) {
-				Toast.makeText(LoginActivity.this, "请输入账号或者密码", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			String url = Constant.BaseUrl + "user_login?account=" + account + "&password=" + SystemTools.getM5DEndo(password);
-			Log.i("LoginActivity", url);
-			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ACCOUNT_LOGIN).start();
-			startProgressDialog();//提示框
-		} else {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(LoginActivity.this);
-			dialog.setTitle("提示");
-			dialog.setMessage("当前网络未连接");
-			dialog.setPositiveButton("去打开", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					startActivity(new Intent("android.settings.WIFI_SETTINGS"));
-				}
-			});
-			dialog.setNegativeButton("取消", null);
-			dialog.show();
-		}
-	}
-	
-	
-	/** 解析车辆信息 **/
-	private void jsonCarData(String str) {
-		app.carDatas.clear();
-		app.carDatas.addAll(JsonCarData.jsonCarInfo(str));
-		// 发出登录广播信号
-		Intent intent = new Intent(Constant.Wicare_Login);
-		sendBroadcast(intent);
-		app.isLogin = true;
-		stopProgressDialog();
-		if("signIn".equals(loginMsg)){
-			finish();
-		}else {
-			Intent intent_main = new Intent(LoginActivity.this,MainActivity.class);
-			startActivity(intent_main);
-			LoginActivity.this.finish();
-		}	
-	}
-	
-	/**
-	 * 开始显示加载
-	 */
-	private void startProgressDialog() {
-		if (mWLoading == null) {
-			mWLoading = WLoading.createDialog(this,WLoading.LARGE_TYPE);
-			mWLoading.setMessage("登陆中...");
-		}
-		mWLoading.show();
-	}
-
-	/**
-	 * 关闭加载提示
-	 */
-	private void stopProgressDialog() {
-		if (mWLoading != null) {
-			mWLoading.dismiss();
-			mWLoading = null;
-		}
-	}
-	
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-	}
 }

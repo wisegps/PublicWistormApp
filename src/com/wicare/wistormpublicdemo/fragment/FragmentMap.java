@@ -119,9 +119,9 @@ public class FragmentMap extends Fragment{
 			carMarker = (Marker) (mBaiduMap.addOverlay(option));
 			MapStatus mapStatus = new MapStatus.Builder().target(
 					carLatLng).build();
-			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
-					.newMapStatus(mapStatus);
-			mBaiduMap.setMapStatus(mapStatusUpdate);
+//			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
+//					.newMapStatus(mapStatus);
+//			mBaiduMap.setMapStatus(mapStatusUpdate);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,91 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_bg"
     android:orientation="vertical" >
-    
-
     
     <include layout="@layout/top_title"/>
     
     
-    <EditText 
-        android:id="@+id/et_account"
-        android:layout_marginLeft="@dimen/margins"
-        android:layout_marginRight="@dimen/margins"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="@dimen/margins"
-		android:background="@drawable/ico_et_back"
-		android:layout_marginTop="50dp"
-		android:singleLine="true"
-		android:hint="请输入帐号"  />
+    <LinearLayout 
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:id="@+id/ll_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="帐号：" />
+        
+        <com.wicare.wistorm.ui.WInputField 
+            android:id="@+id/ed_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入您的帐号" />
+    </LinearLayout>
     
-    <EditText 
-        android:id="@+id/et_pwd"
-		android:layout_marginLeft="@dimen/margins"
-        android:layout_marginRight="@dimen/margins"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="@dimen/margins"
-		android:background="@drawable/ico_et_back"
-		android:layout_marginTop="@dimen/margins"
-		android:singleLine="true"
-		android:hint="请输入密码" />
+    <LinearLayout 
+        android:layout_below="@id/ll_account"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:id="@+id/ll_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码：" />
+        
+        <com.wicare.wistorm.ui.WInputField 
+            android:id="@+id/ed_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="请输入你的密码" />
+    </LinearLayout>
+    
+    <Button 
+        android:id="@+id/btn_login"
+        android:layout_below="@id/ll_password"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textColor="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_blue_"
+        android:text="登陆" />
     
     <RelativeLayout 
-        android:layout_margin="@dimen/margins"
+        android:layout_below="@id/btn_login"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"  >
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="wrap_content" >
+        
+        <View
+            android:id="@+id/v_vertal_line"
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/blue_press" />
+            
+	    <TextView 
+	        android:id="@+id/tv_password"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="忘记密码"
+	        android:layout_centerVertical="true"
+	        android:layout_marginRight="20dp"
+	        android:layout_toLeftOf="@id/v_vertal_line"
+	        android:textColor="@color/blue_press"
+	        />
         
         <TextView 
             android:id="@+id/tv_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margins"
-            android:text="注册"
-            android:textSize="@dimen/main"
-            android:textColor="@drawable/color_blue_text_login"
-            />
-        
-        <TextView 
-            android:id="@+id/tv_forgot_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:padding="@dimen/margins"
-            android:text="忘记密码?"
-            android:textSize="@dimen/main"
-            android:textColor="@drawable/color_blue_text_login"
+            android:text="注册账号"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/v_vertal_line"
+            android:textColor="@color/blue_press"
             />
         
     </RelativeLayout>
-    
-    
-    <TextView
-        android:id="@+id/tv_warming"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
-        android:text="账号密码错误!"
-        android:textColor="@color/pink"
-        android:textSize="@dimen/main"
-        android:visibility="gone" />
-    
-    <Button 
-        android:id="@+id/btn_login"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="@dimen/margins"
-        android:layout_marginRight="@dimen/margins"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="登陆"
-        android:textColor="@color/white"
-        android:textSize="@dimen/btn_size"
-        android:background="@drawable/selector_btn_green"
-        />
-    
-    
-</LinearLayout>
+
+</RelativeLayout>

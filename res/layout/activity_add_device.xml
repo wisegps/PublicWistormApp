@@ -85,6 +85,17 @@
                         android:padding="5dp"
                         android:src="@drawable/ewm" />
                     
+                    <ImageView
+                        android:id="@+id/iv_search"
+                        android:layout_width="@dimen/title_image"
+                        android:layout_height="@dimen/title_image"
+                        android:layout_toLeftOf="@id/iv_serial"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/margins"
+                        android:layout_marginRight="@dimen/margins"
+                        android:padding="5dp"
+                        android:src="@drawable/ws_common_icon_searchbox_magnifier_2" />
+                    
                     
                 </RelativeLayout>
             </LinearLayout>
@@ -94,39 +105,7 @@
                 android:layout_height="0.5dp"
                 android:background="@color/line" />
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:paddingBottom="14dp"
-                android:paddingLeft="@dimen/margins"
-                android:paddingRight="@dimen/margins"
-                android:paddingTop="14dp" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="SIM卡号:"
-                    android:textColor="@color/navy"
-                    android:textSize="@dimen/content" />
-
-                <EditText
-                    android:id="@+id/et_sim"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:inputType="phone"
-                    android:maxLength="11"
-                    android:textColor="@color/navy" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/line" />
+ 
 
             <!-- 硬件版本 -->
 

@@ -29,13 +29,11 @@ public class Constant {
 	/**
 	 * SharedPreferences数据共享名称
 	 */
-	public static final String sharedPreferencesName = "userData";
+	public static final String SP_USER_DATA = "userData";
 	/** 存放用户帐号 **/
-	public static final String sp_account = "sp_account";
+	public static final String SP_ACCOUNT   = "sp_account";
 	/** 存放用户密码 **/
-	public static final String sp_pwd = "sp_pwd";
-	/** 存放个人信息 **/
-	public static final String sp_customer = "sp_customer";
+	public static final String SP_PWD       = "sp_pwd";
 	
 	/** 登录广播，首页获取车辆用到 */
 	public static String Wicare_Login = "com.wicare.wistormpublicdemo.login";

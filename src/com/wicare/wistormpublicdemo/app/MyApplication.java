@@ -3,11 +3,15 @@ package com.wicare.wistormpublicdemo.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.wicare.wistormpublicdemo.model.CarData;
 
 import android.app.Application;
 
 public class MyApplication extends Application{
+	
+
+	public String access_token;
 	
 	/** auth_code **/
 	public String auth_code;
@@ -17,12 +21,8 @@ public class MyApplication extends Application{
 	public String cust_id;
 	/** 用户名称 **/
 	public String cust_name = "";
-	/** 当前位置 */
-	public String Adress = "";
 	/** 当前定位城市 */
 	public String City = "深圳";
-	/** 当前省份 */
-	public String Province = "广东省";
 	
 	public double lat;
 	public double lon;
@@ -34,5 +34,16 @@ public class MyApplication extends Application{
 	
 	
 	public String Token = "";
+	
+	
+	
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		super.onCreate();
+		SDKInitializer.initialize(this);
+	}
+	
+	
 
 }

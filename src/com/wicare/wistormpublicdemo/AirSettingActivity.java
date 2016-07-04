@@ -1,21 +1,25 @@
-package com.wicare.wistormpublicdemo;
+/*package com.wicare.wistormpublicdemo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.wicare.wistorm.ui.pickerview.WTimePopupWindow;
+import com.wicare.wistorm.ui.pickerview.WTimePopupWindow.OnTimeSelectListener;
+import com.wicare.wistorm.ui.pickerview.WTimePopupWindow.Type;
 import com.wicare.wistormpublicdemo.app.Constant;
 import com.wicare.wistormpublicdemo.app.HandlerMsg;
-import com.wicare.wistormpublicdemo.model.Air;
 import com.wicare.wistormpublicdemo.ui.AirTimersListAdapter;
 import com.wicare.wistormpublicdemo.ui.AirTimersListAdapter.OnDeleteTimerListener;
 import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
-import com.wicare.wistormpublicdemo.xutil.HttpAir;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,10 +35,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
+*//**
  * @author Wu 空气净化器设置页面
  *
- */
+ *//*
 public class AirSettingActivity extends Activity {
 	
 	private static String TAG = "AirSettingActivity";
@@ -48,6 +52,8 @@ public class AirSettingActivity extends Activity {
 	private List<String> listTimesData;
 	private ListView lvTimers;//定时器列表
 	private AirTimersListAdapter timersAdapter;//定时器列表适配器
+	
+	private WTimePopupWindow pwTime;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +73,26 @@ public class AirSettingActivity extends Activity {
 		TextView tvTitle = (TextView)findViewById(R.id.tv_top_title);
 		tvTitle.setText("净化器设置");
 		
+		pwTime = new WTimePopupWindow(AirSettingActivity.this, Type.HOURS_MINS);
+        pwTime.setOnTimeSelectListener(new OnTimeSelectListener() {
+			
+			@Override
+			public void onTimeSelect(Date date) {
+				// TODO Auto-generated method stub
+				listTimesData.add(getTime(date));
+				timersAdapter.notifyDataSetChanged();
+			}
+		});
 		
-		/*导航栏*/
+		导航栏
 		ImageView ivBack = (ImageView)findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
 
-		/*净化器模式开关*/
+		净化器模式开关
 		switchMode  = (Switch) findViewById(R.id.switchMode);
 		switchMode.setOnTouchListener(onTouchListener);
-		/*定时开启净化器*/
+		定时开启净化器
 		switchTimer = (Switch) findViewById(R.id.switchTimer);
 		switchTimer.setOnTouchListener(onTouchListener);
 		
@@ -84,7 +100,7 @@ public class AirSettingActivity extends Activity {
 		timersAdapter = new AirTimersListAdapter(this);
 		timersAdapter.setDatas(listTimesData);
 		
-		/*定时器列表      ------ （  最多只能设置五个定时器  ！！！！！！！！！）*/
+		定时器列表      ------ （  最多只能设置五个定时器  ！！！！！！！！！）
 		lvTimers = (ListView)findViewById(R.id.lv_timers);
         lvTimers.addFooterView(LayoutInflater.from(this).inflate(R.layout.item_list_timers_foot_add, null));
         lvTimers.setAdapter(timersAdapter);
@@ -97,10 +113,9 @@ public class AirSettingActivity extends Activity {
 					if(listTimesData.size()>4){
 						Toast.makeText(AirSettingActivity.this, 
 								getResources().getString(R.string.max_air_timers), Toast.LENGTH_SHORT).show();
-						return;					}
-					
-					listTimesData.add("12:00");
-					timersAdapter.notifyDataSetChanged();
+						return;					
+						}
+					pwTime.showAtLocation(view, Gravity.BOTTOM, 0, 0, new Date());
 				}
 			}
 		});
@@ -117,12 +132,14 @@ public class AirSettingActivity extends Activity {
 		});
         
         
+        
+        
 	}
 	
 	
-	/**
+	*//**
 	 * Handler 回调
-	 */
+	 *//*
 	public Handler.Callback handleCallBack = new Handler.Callback() {
 
 		@Override
@@ -139,9 +156,9 @@ public class AirSettingActivity extends Activity {
 		}
 	};
 	
-	/**
+	*//**
 	 * 点击事件
-	 */
+	 *//*
 	private OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
@@ -150,16 +167,22 @@ public class AirSettingActivity extends Activity {
 			
 			case R.id.iv_top_back:
 //				setMode();
-				AirSettingActivity.this.finish();
+				
+				for(int i=0;i<timersAdapter.getListTimersEnable().size();i++){
+					Log.i("AirSettingActivity", timersAdapter.getListTimersEnable().get(i));
+				}
+				
+				
+//				AirSettingActivity.this.finish();
 				break;
 			}
 		}
 	};
 	
 	
-	/**
+	*//**
 	 * 触摸事件
-	 */
+	 *//*
 	private OnTouchListener onTouchListener = new OnTouchListener() {
 		
 		@Override
@@ -188,11 +211,11 @@ public class AirSettingActivity extends Activity {
 	
 	
 	
-	/**
+	*//**
 	 * 初始化界面
 	 * 
 	 * @param air
-	 */
+	 *//*
 	public void initValue(Air air) {
 		int mode = air.getAir_mode();
 		switchMode.setChecked(false);
@@ -222,9 +245,9 @@ public class AirSettingActivity extends Activity {
 	}
 	
 	
-	/**
+	*//**
 	 * 设置模式
-	 */
+	 *//*
 	public void setMode() {
 		int mode = Constant.AIR_MODE_MANUL;
 		if (switchMode.isChecked()) {
@@ -245,4 +268,14 @@ public class AirSettingActivity extends Activity {
 		super.onDestroy();
 		ActivityCollector.removeActivity(this);
 	}
+	
+	*//**
+	 * @param date
+	 * @return
+	 *//*
+	public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(date);
+    }
 }
+*/

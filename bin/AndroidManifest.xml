@@ -37,11 +37,10 @@
     <application
         android:name="com.wicare.wistormpublicdemo.app.MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ws_ico_baba"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
-        
-        
+
         <activity
             android:name="com.wicare.wistormpublicdemo.LoginActivity"
             android:label="@string/app_name" >
@@ -59,13 +58,8 @@
         <activity android:name="com.wicare.wistormpublicdemo.RegisterActivity"></activity>
         
         <!-- 忘记密码 -->
-        <activity android:name="com.wicare.wistormpublicdemo.ForgotPasswordActivity"></activity>
-        
-        <!-- 填写验证码 -->
-        <activity android:name="com.wicare.wistormpublicdemo.IdentifyCodeAcitvity"></activity>
-        
-        <!-- 注册信息填写页面 -->
-        <activity android:name="com.wicare.wistormpublicdemo.RegisterInfoActivity"></activity>
+        <activity android:name="com.wicare.wistormpublicdemo.UpdataPasswordActivity"></activity>
+
         
         
         <!-- 我的车辆 页面-->
@@ -133,12 +127,10 @@
             android:process=":remote" >
         </service>
         
-        <!-- 测试版本 ： 5GugHO2nMm4EZh1YllL0d1GP 
-        	   正式版本：O9m1BTame2APF9yUQaqINzCu
-        -->
+   
         <meta-data  
 	        android:name="com.baidu.lbsapi.API_KEY"  
-	        android:value="5GugHO2nMm4EZh1YllL0d1GP" /> 
+	        android:value="Tze5mgUIxVaOrgM7uhCzLHgmqLjKBOGu" /> 
         
     </application>
 

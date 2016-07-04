@@ -1,15 +1,27 @@
 package com.wicare.wistormpublicdemo;
 
 import java.io.File;
+import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.volley.VolleyError;
+import com.google.gson.JsonObject;
+import com.wicare.wistorm.api.WVehicleApi;
+import com.wicare.wistorm.http.BaseVolley;
+import com.wicare.wistorm.http.OnFailure;
+import com.wicare.wistorm.http.OnSuccess;
+import com.wicare.wistorm.ui.WAlertDialog;
 import com.wicare.wistormpublicdemo.app.Constant;
 import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
 import com.wicare.wistormpublicdemo.model.CarData;
 import com.wicare.wistormpublicdemo.ui.SlidingView;
+import com.wicare.wistormpublicdemo.xutil.L;
 import com.wicare.wistormpublicdemo.xutil.NetThread;
+import com.wicare.wistormpublicdemo.xutil.T;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -20,6 +32,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,20 +66,21 @@ public class MyCarsActivity extends Activity{
 	boolean isRefresh = false;
 	/*车辆列表*/
 	private ListView lv_my_cars;
-	/*帐号*/
-	private String sp_account;
 	/*APP*/
 	private MyApplication app;
 	/*适配器*/
 	private CarAdapter carAdapter;
 	
-	
+	private Context mContext;
+	private WVehicleApi vehicleApi;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_my_cars);
 		app = (MyApplication)getApplication();
+		mContext = MyCarsActivity.this;
+		
 		carAdapter = new CarAdapter();
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
@@ -81,11 +95,16 @@ public class MyCarsActivity extends Activity{
 		lv_my_cars.setAdapter(carAdapter);
 		lv_my_cars.setOnItemClickListener(onItemClickListener);
 		
-		SharedPreferences preferences = getSharedPreferences(Constant.sharedPreferencesName, Context.MODE_PRIVATE);
-		sp_account = preferences.getString(Constant.sp_account, "");
-		
+		init();
+		getVehileList();
 	}
-	
+	/**
+	 * wistorm api接口网络请求初始化
+	 */
+	private void init(){
+		vehicleApi = new WVehicleApi();
+		BaseVolley.init(mContext);
+	}
 	
 	/**
 	 * 列表点击事件
@@ -117,6 +136,77 @@ public class MyCarsActivity extends Activity{
 	};
 	
 	
+	/**
+	 * 获取车辆信息列表
+	 */
+	private void getVehileList(){
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("access_token", app.access_token);
+//		params.put("seller_id", seller_id);//商户ID  
+		params.put("cust_id", app.cust_id);//不是商户的时候 用 cust_id
+		params.put("sorts", "obj_id");
+		params.put("limit", "-1");
+		String fields = "nick_name,cust_name,car_series,car_brand_id,cust_id,device_id";
+		vehicleApi.list(params, fields, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG, "我的车辆列表信息：" + response);
+				parseVehicleList(response);
+			}
+		}, new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	
+	/**
+	 * @param strJson 
+	 */
+	private void parseVehicleList(String strJson){
+		app.carDatas.clear();
+		try {
+			JSONObject jsonObject =  new JSONObject(strJson);
+			JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
+			
+			for(int i=0;i<jsonArray.length();i++){
+				L.d(TAG, "第  " + i + " 辆车信息：" + jsonArray.get(i).toString());
+				CarData cardata = new CarData();
+//				第  0 辆车信息：{"nick_name":"timm","cust_name":"Dancan","car_series":"奥迪A4","car_brand_id":9,"device_id":0,"obj_id":2884,"cust_id":1219,"mobile":"13537687553"}
+				JSONObject object = new JSONObject(jsonArray.get(i).toString());
+				cardata.setCar_brand_id(object.getString("car_brand_id"));
+				cardata.setCar_serial(object.getString("car_series"));
+				cardata.setNick_name(object.getString("nick_name"));
+				cardata.setObj_id(object.getString("obj_id"));
+				if(object.has("device_id")){
+					cardata.setDevice_id(object.getString("device_id"));
+				}else{
+					cardata.setDevice_id("0");
+				}
+				
+				
+				
+				
+				app.carDatas.add(cardata);
+			}
+			carAdapter.notifyDataSetChanged();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			L.d(TAG, "错误信息： " + e.toString());
+		}
+	}
+	
+	
+	
+	
+	
 	/**删除车辆，或添加修改终端后，用这个标记删除内存里的数据，不用从网络上获取**/
 	int index;
 	
@@ -127,7 +217,8 @@ public class MyCarsActivity extends Activity{
 	 * 适配器
 	 */
 	class CarAdapter extends BaseAdapter {
-		private LayoutInflater layoutInflater = LayoutInflater.from(MyCarsActivity.this);
+		
+		LayoutInflater layoutInflater = LayoutInflater.from(MyCarsActivity.this);
 
 		@Override
 		public int getCount() {
@@ -170,28 +261,23 @@ public class MyCarsActivity extends Activity{
 				holder.iv_icon.setImageResource(R.drawable.icon_car_moren);
 			}
 			holder.tv_name.setText(carData.getNick_name());
-			holder.tv_serial.setText(carData.getCar_series());
+			holder.tv_serial.setText(carData.getCar_serial());
 			holder.tv_del.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// 删除车辆
-					index = position;
-					deleteCar(position);
+					deleteVehicle(position);
 				}
 			});
 			holder.sv.ScorllRestFast();
-			if (carData.getDevice_id() == null || carData.getDevice_id().equals("") || carData.getDevice_id().equals("0")) {
+			if (carData.getDevice_id().equals("0")) {
 				holder.tv_update.setVisibility(View.GONE);
 				holder.tv_remove.setVisibility(View.GONE);
 				holder.bt_bind.setVisibility(View.VISIBLE);
 				holder.bt_bind.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Intent intent = new Intent(MyCarsActivity.this, DeviceAddActivity.class);
-						intent.putExtra("car_id", carData.getObj_id());
-						intent.putExtra("car_series_id", carData.getCar_series_id());
-						intent.putExtra("car_series", carData.getCar_series());
-						intent.putExtra("isBind", true);
+						Intent intent = new Intent(mContext, DeviceAddActivity.class);
+						intent.putExtra("obj_id", carData.getObj_id());
 						startActivityForResult(intent, 2);
 					}
 				});
@@ -200,7 +286,6 @@ public class MyCarsActivity extends Activity{
 				holder.tv_update.setVisibility(View.GONE);
 				holder.tv_remove.setVisibility(View.GONE);
 			}
-
 			return convertView;
 		}
 
@@ -215,62 +300,58 @@ public class MyCarsActivity extends Activity{
 	
 	
 	/**删除车辆确认**/
-	private void deleteCar(final int position) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(MyCarsActivity.this);
-		builder.setTitle("提示");
-		builder.setMessage("确定删除该车辆？");
-		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+	private void deleteVehicle(final int position) {
+		WAlertDialog.Builder dialog = new WAlertDialog.Builder(mContext);
+		dialog.setMessage("确定删除该车辆 ?");
+		dialog.setMessageColor(Color.RED);
+		dialog.setPositiveButton("确定", new android.content.DialogInterface.OnClickListener() {
+			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				String url = Constant.BaseUrl + "vehicle/" + app.carDatas.get(position).getObj_id() 
-							+ "?auth_code=" + app.auth_code;
-				new Thread(new NetThread.DeleteThread(mHandler, url, HandlerMsg.DELET_CAR)).start();
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				HashMap<String, String> params = new HashMap<String, String>();
+				params.put("access_token", app.access_token);
+				params.put("obj_id", app.carDatas.get(position).getObj_id());
+				vehicleApi.delete(params, new OnSuccess() {
+					
+					@Override
+					protected void onSuccess(String response) {
+						// TODO Auto-generated method stub
+						L.i(TAG, "删除车辆 返回信息：" + response);
+						try {
+							JSONObject obj = new JSONObject(response);
+							if("0".equalsIgnoreCase(obj.getString("status_code"))){
+								T.showShort(mContext, "删除车辆信息成功");
+								app.carDatas.remove(position);
+								carAdapter.notifyDataSetChanged();
+							}else{
+								T.showShort(mContext, "删除车辆信息失败");
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}, new OnFailure() { 
+					
+					@Override
+					protected void onFailure(VolleyError error) {
+						
+					}
+				});
 			}
-		}).setNegativeButton("否", null);
-		builder.setNegativeButton("取消", null);
-		builder.show();
-	}
-	
-	
-	
-	
-	/**
-     * Handler 处理消息
-     */
-	@SuppressLint("HandlerLeak") 
-	private Handler mHandler = new Handler() {
-    	
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-            
-            case HandlerMsg.DELET_CAR:
-            	Log.d(TAG, "====删除车辆之后返回的信息===" + msg.obj.toString());
-            	jsonDelete(msg.obj.toString());
-            	break;
-            }
-        }
-    };	
-    
-    
-    
-    /**
-     * @param str 解析删除车辆之后返回信息处理
-     */
-    private void jsonDelete(String str) {
-		try {
-			JSONObject jsonObject = new JSONObject(str);
-			if (jsonObject.getString("status_code").equals("0")) {
-				Toast.makeText(MyCarsActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-				app.carDatas.remove(index);
-				carAdapter.notifyDataSetChanged();
-				isRefresh = true;
+		});
+		dialog.setNegativeButton("取消", new android.content.DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
+		dialog.create().show();
 	}
+
     
     
     
@@ -278,8 +359,10 @@ public class MyCarsActivity extends Activity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
     	
-    	if(resultCode == 1){
-    		carAdapter.notifyDataSetChanged();//刷新车辆列表
+    	if(resultCode == CarAddActivity.FINISH_ADD_CAR_REQUEST_CODE){
+    		getVehileList();//刷新车辆列表
+    	}else if(resultCode == DeviceAddActivity.BIND_RESULT_CODE){
+			T.showShort(mContext, "绑定设备成功！");
     	}
     	
     }
@@ -308,10 +391,10 @@ public class MyCarsActivity extends Activity{
 	}
 	
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		carAdapter.notifyDataSetChanged();//刷新车辆列表
-	}
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		carAdapter.notifyDataSetChanged();//刷新车辆列表
+//	}
 	
 }

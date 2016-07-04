@@ -1,212 +1,272 @@
 package com.wicare.wistormpublicdemo;
 
-import java.util.regex.Pattern;
-
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.wicare.wistorm.http.HttpThread;
-import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.HandlerMsg;
-import com.wicare.wistormpublicdemo.xutil.ActivityCollector;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.wicare.wistorm.api.WCommApi;
+import com.wicare.wistorm.api.WUserApi;
+import com.wicare.wistorm.http.BaseVolley;
+import com.wicare.wistorm.http.OnFailure;
+import com.wicare.wistorm.http.OnSuccess;
+import com.wicare.wistorm.ui.WInputField;
+import com.wicare.wistormpublicdemo.xutil.L;
+import com.wicare.wistormpublicdemo.xutil.T;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
-import android.util.Log;
-import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-/**
- * @author Wu 
- * 
- * 注册页面
- *
- */
 public class RegisterActivity extends Activity {
 	
-	static final String TAG = "RegisterActivity";
-	/*帐号输入框*/
-	private EditText etAccount;
-	/*协议*/
-	private TextView tvAgreement;
-	/*帐号*/
-	private String account;
-	/*判断是否是手机号*/
-	boolean isPhone = true;
+	private static final String TAG = "RegisterActivity";
+//	private TextView tvBack;
+//	private TextView tvTitle;
+	
+	private WInputField edAccount;
+	private WInputField edPassword;
+	private EditText edVolidCode;
+	private WInputField edPasswordAgain;
+	
+	private Button btnGetVolid;
+	private Button btnRegister;
+	
+	private String volidCode = "";//验证码
+	private String account = "";
+	private String password = "";
+	private String passwordAgain = "";
+	
+	public WUserApi userApi;
+	public WCommApi commApi;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_register);	
-		ActivityCollector.addActivity(this);//添加当前活动进行管理
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_register);
+		
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
 		TextView tvTitle = (TextView) findViewById(R.id.tv_top_title);
-		tvTitle.setText("注册");
-		findViewById(R.id.btn_register).setOnClickListener(onClickListener);
-		etAccount = (EditText)findViewById(R.id.et_account_num);
-		tvAgreement = (TextView)findViewById(R.id.tv_agreement);
-		setAgreement();
+		tvTitle.setText("注册账号");
+		
+		
+		
+		edAccount = (WInputField)findViewById(R.id.ed_account);
+		edPassword = (WInputField)findViewById(R.id.ed_password);
+		edVolidCode = (EditText)findViewById(R.id.ed_volid);
+		edPasswordAgain = (WInputField)findViewById(R.id.ed_password_again);
+		
+		btnGetVolid = (Button)findViewById(R.id.btn_getvolid);
+		btnRegister = (Button)findViewById(R.id.btn_register);
+		
+		btnGetVolid.setOnClickListener(onClickListener);
+		btnRegister.setOnClickListener(onClickListener);
+		init();
 	}
-
 	
 	/**
-	 * 点击事件监听
+	 * wistorm api接口网络请求初始化
+	 */
+	private void init(){
+		userApi = new WUserApi();
+		commApi = new WCommApi();
+		BaseVolley.init(RegisterActivity.this);
+	}
+	
+	/**
+	 * OnClickListener
 	 */
 	OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
+			// TODO Auto-generated method stub
 			switch (v.getId()) {
-				
-			case R.id.iv_top_back://返回
+			case R.id.iv_top_back:
 				finish();
 				break;
-			case R.id.btn_register:
-				register();
+			case R.id.btn_getvolid:
+				sendVolidCode();
 				break;
+			case R.id.btn_register:
+				isVolidCodeTrue();
+				break;
+			
 			}
-		}
+		} 
 	};
-	
-	
-	
+
 	
 	/**
-     * Handler 处理消息
-     */
-	@SuppressLint("HandlerLeak") 
-	private Handler mHandler = new Handler() {
-    	
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-            
-            case HandlerMsg.ACCOUNT_IS_EXIST:
-            	Log.d(TAG, "====是否存在==="+msg.obj.toString());
-            	jsonIsExist(msg.obj.toString());
-            	break;
-            }
-        }
-    };	
-	
-	
-	/**
-	 * @param strJson Json 数据
+	 * 发送验证码到手机或者邮箱帐号
 	 */
-	private void jsonIsExist(String strJson){
-		try {
-			JSONObject jsonObject = new JSONObject(strJson);
-			boolean isExist = jsonObject.getBoolean("exist");
-			if(isExist){
-				Toast.makeText(RegisterActivity.this, "该账号已注册，请登录", Toast.LENGTH_SHORT).show();
-			}else{
-				AlertDialog.Builder dialog = new AlertDialog.Builder(RegisterActivity.this);
-				if(isPhone){
-					dialog.setTitle("确认手机帐号");
-					dialog.setMessage("我们已将验证码短信发送到你的手机，请尽快查收\n" + account);
-				}else{
-					dialog.setTitle("确认手机帐号");
-					dialog.setMessage("我们已将验证码短信发送到你的邮箱，请尽快查收\n" + account);
-				}
-				dialog.setPositiveButton("好",new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						Intent i_identify = new Intent(RegisterActivity.this,IdentifyCodeAcitvity.class);
-						i_identify.putExtra("account", account);
-						i_identify.putExtra("isPhone", isPhone);
-						i_identify.putExtra("mark", 0);
-						Log.d(TAG, "====是account存在===" + account);
-						startActivity(i_identify);
-					}
-				});
-				dialog.setNegativeButton("取消", null);
-				dialog.show();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	private void sendVolidCode(){
+		account = edAccount.getText().toString().trim();
+		if("".equals(account)){
+			T.showShort(RegisterActivity.this, "账号不能为空");
+			return;
 		}
 		
+		commApi.sendSMS(account, 1, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG,response);
+				parseSendVolidCode(response);
+			}
+		},new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	
+	
 	/**
-	 * 注册 判断帐号是否存在
+	 * @param strJson
 	 */
-	private void register() {
-		account = etAccount.getText().toString().trim();
-		String url = Constant.BaseUrl + "exists?query_type=6&value=" + account;
-		if (account.equals("")) {
-			Toast.makeText(RegisterActivity.this, "请填写手机号码或邮箱", Toast.LENGTH_SHORT).show();
-		} else if (account.length() == 11 && isNumeric(account)) {
-			isPhone = true;
-			//开启线程获取服务器数据
-			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ACCOUNT_IS_EXIST).start();
-		} else if (isEmail(account)) {
-			isPhone = false;
-			//开启线程获取服务器数据
-			new HttpThread.getDataThread(mHandler, url, HandlerMsg.ACCOUNT_IS_EXIST).start();
-		} else {
-			Toast.makeText(RegisterActivity.this, "您输入的账号不正确",
-					Toast.LENGTH_SHORT).show();
+	private void parseSendVolidCode(String strJson){
+		try {
+			JSONObject object = new JSONObject(strJson);
+			if("0".equals(object.getString("status_code"))){
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						T.showShort(RegisterActivity.this, "验证码已经发送到" + account + "中");
+					}
+				});
+			};
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * @param str 判断是否是数字手机号
-	 * @return
+	 * 获取后台发送到手机的ya
 	 */
-	public static boolean isNumeric(String str) {
-		Pattern pattern = Pattern.compile("[0-9]*");
-		return pattern.matcher(str).matches();
+	private void isVolidCodeTrue(){		
+		volidCode = edVolidCode.getText().toString().trim();
+		if("".equals(volidCode) || "".equals(account)){
+			T.showShort(RegisterActivity.this, "帐号或验证码不能为空");
+			return;
+		}else {
+			userApi.volidCode(account, volidCode, new OnSuccess() {
+				
+				@Override
+				protected void onSuccess(String response) {
+					// TODO Auto-generated method stub
+					L.d(TAG, response);
+					try {
+						JSONObject object = new JSONObject(response);
+						if(object.getBoolean("valid") == true){
+							L.d(TAG, "验证码正确");
+							userApi.exists(account,new OnSuccess() {
+								
+								@Override
+								protected void onSuccess(String response) {
+									// TODO Auto-generated method stub
+									L.d("LL", response.toString());
+									try {
+										JSONObject object = new JSONObject(response);
+										if("true".equals(object.getString("exist"))){
+											T.showShort(RegisterActivity.this, "账号已经存在");
+										}else{
+											registerAccount();
+										}
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+//									06-30 18:47:46.046: I/LL(5455): {"exist":true}
+								}
+							},new OnFailure() {
+								
+								@Override
+								protected void onFailure(VolleyError error) {
+									// TODO Auto-generated method stub
+									L.d("LL",error.toString());
+								}
+							});	
+						}else {
+							T.showShort(RegisterActivity.this, "验证码不对请从新填写");
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+					}
+				}
+			},new OnFailure() {
+				
+				@Override
+				protected void onFailure(VolleyError error) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}	
 	}
+	
 
-	/**
-	 * @param str 判断是否是邮箱
-	 * @return
-	 */
-	public static boolean isEmail(String str) {
-		Pattern pattern = Pattern
-				.compile("^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
-		return pattern.matcher(str).matches();
-	}
 	
 	/**
-	 * 设置协议
+	 * 注册
 	 */
-	private void setAgreement() {
-		SpannableString sp = new SpannableString("点击上面的注册按钮，即表示同意《叭叭软件许可及服务条款》");
-		sp.setSpan(new URLSpan("http://api.bibibaba.cn/help/fwtk"), 16, 27,
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		tvAgreement.setText(sp);
-		tvAgreement.setMovementMethod(LinkMovementMethod.getInstance());
-	}
-	
-	
-	
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		ActivityCollector.removeActivity(this);
+	private void registerAccount(){
+		password = edPassword.getText().toString().trim();
+		passwordAgain = edPasswordAgain.getText().toString().trim();	
+		if("".equals(password) || "".equals(passwordAgain)){
+			T.showShort(RegisterActivity.this, "密码不能为空");
+		}
+		if(!password.equals(passwordAgain)){
+			T.showShort(RegisterActivity.this, "两次输入的密码不一致");
+		}
+		
+		userApi.register(account, password, volidCode,new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG, "注册返回信息 ：" + response);
+				try {
+					JSONObject object = new JSONObject(response);
+					if("0".equals(object.getString("status_code"))){
+						T.showShort(RegisterActivity.this, "注册成功");
+						RegisterActivity.this.finish();
+					}else{
+						// TODO Auto-generated method stub
+						T.showShort(RegisterActivity.this, "注册失败");
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+		},new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+			}
+		});
 	}
 	
 }

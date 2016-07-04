@@ -1,27 +1,24 @@
 package com.wicare.wistormpublicdemo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.volley.VolleyError;
+import com.wicare.wistorm.api.WVehicleApi;
+import com.wicare.wistorm.http.BaseVolley;
+import com.wicare.wistorm.http.OnFailure;
+import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.WCarBrandSelector;
-import com.wicare.wistormpublicdemo.app.Constant;
-import com.wicare.wistormpublicdemo.app.HandlerMsg;
 import com.wicare.wistormpublicdemo.app.MyApplication;
-import com.wicare.wistormpublicdemo.model.CarData;
-import com.wicare.wistormpublicdemo.xutil.NetThread;
+import com.wicare.wistormpublicdemo.xutil.L;
+import com.wicare.wistormpublicdemo.xutil.T;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -42,7 +39,7 @@ public class CarAddActivity extends Activity{
 	static final int ADD_CAR_RESULT_CODE = 2;
 	static final int SELECTOR_CAR_RESULT_CODE = 1;
 	static final int SELECTOR_CAR_REQUEST_CODE = 1;
-	static final int FINISH_ADD_CAR_REQUEST_CODE = 3;
+	public static final int FINISH_ADD_CAR_REQUEST_CODE = 3;
 	
 	/*车辆昵称输入*/
 	private EditText etNickName;
@@ -67,23 +64,22 @@ public class CarAddActivity extends Activity{
 	/*系列中的款型id*/
 	private String car_type_id = "";
 	
-	CarData carNewData = new CarData();
-	
 	MyApplication app;
-	
-    int car_id = 0;
-	
+    
+    private Context mCotext;
+    private WVehicleApi vehicleApi;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_cars);
 		app = (MyApplication)getApplication();
+		mCotext = CarAddActivity.this;
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
 		TextView tvTitle = (TextView) findViewById(R.id.tv_top_title);
-		tvTitle.setText("我的爱车");
+		tvTitle.setText("添加车辆");
 		//填写信息完成提交
 		findViewById(R.id.tv_finish).setOnClickListener(onClickListener);
 		findViewById(R.id.btn_choose).setOnClickListener(onClickListener);
@@ -93,9 +89,17 @@ public class CarAddActivity extends Activity{
 		tvCarModels.setOnClickListener(onClickListener);
 		etObjName     = (EditText)findViewById(R.id.et_obj_name);
 		tvCarProvince = (TextView)findViewById(R.id.tv_car_province);
-		
+		init();
 	}
 	
+	
+	/**
+	 * wistorm api接口网络请求初始化
+	 */
+	private void init(){
+		vehicleApi = new WVehicleApi();
+		BaseVolley.init(mCotext);
+	}
 	
 	
 	/**
@@ -130,53 +134,6 @@ public class CarAddActivity extends Activity{
 	
 	
 	/**
-     * Handler 处理消息
-     */
-	@SuppressLint("HandlerLeak") 
-	private Handler mHandler = new Handler() {
-    	
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-            
-            case HandlerMsg.ADD_NEW_CAR:
-            	Log.d(TAG, "====提交车辆之后返回的信息===" + msg.obj.toString());
-            	jsonAddCar(msg.obj.toString());
-            	break;
-            }
-        }
-    };	
-    
-    
-
-
-	/**
-	 * @param strJson
-	 */
-	private void jsonAddCar(String strJson) {
-		try {
-			JSONObject jsonObject = new JSONObject(strJson);
-			if (jsonObject.getString("status_code").equals("0")) {
-				car_id = jsonObject.getInt("obj_id");
-				carNewData.setObj_id(car_id);
-				app.carDatas.add(carNewData);
-				Toast.makeText(CarAddActivity.this, "车辆添加成功", Toast.LENGTH_SHORT).show();
-				setResult(FINISH_ADD_CAR_REQUEST_CODE);
-				finish();
-			} else {
-				Toast.makeText(CarAddActivity.this, "添加失败", Toast.LENGTH_SHORT) .show();
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-			Toast.makeText(CarAddActivity.this, "添加失败", Toast.LENGTH_SHORT)
-					.show();
-		}
-	}
-	
-	
-	
-	/**
 	 * 提交添加新车辆的信息
 	 */
 	private void addCarSubmit() {
@@ -193,30 +150,51 @@ public class CarAddActivity extends Activity{
 		if (obj_name.length() == 1) {
 			obj_name = "";
 		}
-		String url = Constant.BaseUrl + "vehicle/simple?auth_code=" + app.auth_code;
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		carNewData.setObj_name(obj_name);
-		carNewData.setNick_name(nick_name);
-		carNewData.setCar_brand(car_brand);
-		carNewData.setCar_series(car_series);
-		carNewData.setCar_type(car_type);
-		carNewData.setCar_brand_id(car_brand_id);
-		carNewData.setCar_series_id(car_series_id);
-		carNewData.setCar_type_id(car_type_id);
-		params.add(new BasicNameValuePair("cust_id", app.cust_id));
-		params.add(new BasicNameValuePair("obj_name", obj_name));
-		params.add(new BasicNameValuePair("nick_name", nick_name));
-		params.add(new BasicNameValuePair("car_brand", car_brand));
-		params.add(new BasicNameValuePair("car_series", car_series));
-		params.add(new BasicNameValuePair("car_type", car_type));
-		params.add(new BasicNameValuePair("car_brand_id", car_brand_id));
-		params.add(new BasicNameValuePair("car_series_id", car_series_id));
-		params.add(new BasicNameValuePair("car_type_id", car_type_id));
 		
-		new NetThread.postDataThread(mHandler, url, params, HandlerMsg.ADD_NEW_CAR).start();
-
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("access_token", app.access_token);
+		params.put("cust_id", app.cust_id);
+//		params.put("device_id", "0");//默认 0  没有绑定设备
+		params.put("car_brand_id", car_brand_id);
+		params.put("car_brand", car_brand);
+		params.put("car_series_id", car_series_id);
+		params.put("car_series", car_series);
+		params.put("car_type_id", car_type_id);
+		params.put("car_type", car_type);
+		params.put("obj_name", obj_name);
+		params.put("nick_name", nick_name);
+		
+		vehicleApi.create(params, new OnSuccess() {
+			
+			@Override
+			protected void onSuccess(String response) {
+				// TODO Auto-generated method stub
+				L.d(TAG, "创建车辆返回信息：" + response);
+				try {
+					JSONObject obj = new JSONObject(response);
+					
+					if("0".equals(obj.getString("status_code"))){
+						T.showShort(mCotext, "创建车辆成功！");
+						setResult(FINISH_ADD_CAR_REQUEST_CODE);
+						finish();
+					}else if("8".equals(obj.getString("status_code")))
+						T.showShort(mCotext, "该车辆已被添加过");
+					else{
+						T.showShort(mCotext, "创建车辆失败！");
+					}
+				} catch (JSONException e){
+					e.printStackTrace();
+				}
+			}
+		}, new OnFailure() {
+			
+			@Override
+			protected void onFailure(VolleyError error) {
+				// TODO Auto-generated method stub
+				T.showShort(mCotext, "创建车辆失败！");
+			}
+		});
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
@@ -236,7 +214,7 @@ public class CarAddActivity extends Activity{
 		    car_series_id = car_msg.getString("seriesId");//汽车型号ID
 		    car_type    = car_msg.getString("type");  //汽车款式
 		    car_type_id   = car_msg.getString("typeId");  //汽车款式ID		
-		    tvCarModels.setText(car_series + "--" + car_type);
+		    tvCarModels.setText(car_series + " " + car_type);
 			break;
 		}
 	};
