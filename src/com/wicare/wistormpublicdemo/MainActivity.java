@@ -41,7 +41,7 @@ import application.MyApplication;
 /**
  * @author W
  *
- * 主页
+ * 主页 https://github.com/wisegps/PublicWistormApp.git
  *
  */
 public class MainActivity extends FragmentActivity{

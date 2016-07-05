@@ -87,9 +87,9 @@ public class MyCarsActivity extends Activity{
 		lv_my_cars.addFooterView(foot_view);
 		lv_my_cars.setAdapter(carAdapter);
 		lv_my_cars.setOnItemClickListener(onItemClickListener);
-		
 		init();
 	}
+	
 	/**
 	 * wistorm api接口网络请求初始化
 	 */
@@ -342,6 +342,7 @@ public class MyCarsActivity extends Activity{
     	if(resultCode == CarAddActivity.FINISH_ADD_CAR_REQUEST_CODE){
     		getVehileList();//刷新车辆列表
     	}else if(resultCode == DeviceAddActivity.BIND_RESULT_CODE){
+    		getVehileList();//刷新车辆列表
 			T.showShort(mContext, "绑定设备成功！");
     	}
     }

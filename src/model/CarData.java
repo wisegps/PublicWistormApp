@@ -17,6 +17,65 @@ public class CarData{
 	private String obj_id;
 	
 	
+	/* 净化器速度   */
+	private String air_speed;
+	/* 净化器模式   */
+	private String air_mode;
+	/* 净化器开关   */
+	private String air_switch;
+	/* 净化器设备的纬度   */
+	private String lat;
+	/* 净化器设备的经度   */
+	private String lon;
+	/* 车辆内的空气质量值   */
+	private String air;
+	/* 电压   小于12时候不能正常工作   */
+	private String battery;
+	
+	
+	
+	public String getAir_speed() {
+		return air_speed;
+	}
+	public void setAir_speed(String air_speed) {
+		this.air_speed = air_speed;
+	}
+	public String getAir_mode() {
+		return air_mode;
+	}
+	public void setAir_mode(String air_mode) {
+		this.air_mode = air_mode;
+	}
+	public String getAir_switch() {
+		return air_switch;
+	}
+	public void setAir_switch(String air_switch) {
+		this.air_switch = air_switch;
+	}
+	public String getLat() {
+		return lat;
+	}
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+	public String getLon() {
+		return lon;
+	}
+	public void setLon(String lon) {
+		this.lon = lon;
+	}
+	public String getAir() {
+		return air;
+	}
+	public void setAir(String air) {
+		this.air = air;
+	}
+	public String getBattery() {
+		return battery;
+	}
+	public void setBattery(String battery) {
+		this.battery = battery;
+	}
 	public String getObj_id() {
 		return obj_id;
 	}
