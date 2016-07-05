@@ -428,7 +428,7 @@ public class FragmentHome extends Fragment{
 			public void run() {
 				while (isResume) {
 					getDeviceData(device_id);
-					SystemClock.sleep(60000);
+					SystemClock.sleep(10000);
 				}
 			}
 		}).start();
