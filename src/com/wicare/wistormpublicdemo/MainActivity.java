@@ -110,7 +110,11 @@ public class MainActivity extends FragmentActivity{
 			switch (index) {
 			case 0:
 				showFragment("home");
-				titleName.setText(carName);
+				if(items.size()==0){
+					titleName.setText("NaN");
+				}else{
+					titleName.setText(carName);
+				}
 				iv_arrow.setVisibility(View.VISIBLE);
 				break;
 			case 1:
@@ -134,26 +138,31 @@ public class MainActivity extends FragmentActivity{
 		
 		@Override
 		public void onClick(View v) {
-			iv_arrow.setImageResource(R.drawable.ic_bottom_arrow);
-			final CustomerPopupWindow popView = new CustomerPopupWindow(MainActivity.this);
-			popView.initView(v,400,LayoutParams.WRAP_CONTENT);
-			popView.setData(items);
-			popView.SetOnItemClickListener(new OnItemClickListener() {
+			
+			if(items.size()>1){
+				iv_arrow.setImageResource(R.drawable.ic_bottom_arrow);
+				final CustomerPopupWindow popView = new CustomerPopupWindow(MainActivity.this);
+				popView.initView(v,400,LayoutParams.WRAP_CONTENT);
+				popView.setData(items);
+				popView.SetOnItemClickListener(new OnItemClickListener() {
 
-				@Override
-				public void OnItemClick(int index) {
-					// TODO Auto-generated method stub
-					popView.dismiss();
-					iv_arrow.setImageResource(R.drawable.ic_top_arrow);
-					titleName.setText(items.get(index));
-					String device_id = app.carDatas.get(index).getDevice_id();
-					if("0".equals(device_id)){
-						T.showLong(mContext, "该车辆尚未绑定设备");
-					}else{
-						EventBus.getDefault().post(new UpdataHomeFragment(device_id));
+					@Override
+					public void OnItemClick(int index) {
+						// TODO Auto-generated method stub
+						popView.dismiss();
+						iv_arrow.setImageResource(R.drawable.ic_top_arrow);
+						titleName.setText(items.get(index));
+						String device_id = app.carDatas.get(index).getDevice_id();
+						if("0".equals(device_id)){
+							T.showLong(mContext, "该车辆尚未绑定设备");
+						}else{
+							EventBus.getDefault().post(new UpdataHomeFragment(device_id));
+						}
 					}
-				}
-			});	
+				});	
+			}else{
+				T.showLong(mContext, "您没有添加车辆，请先创建车辆");
+			}
 		}
 	};
 	
@@ -235,6 +244,15 @@ public class MainActivity extends FragmentActivity{
 	public void onEventAsync(UpdataCarListEvent event){  
 	    Log.d(TAG, "更新数据信息：" + event.getMsg());  
 	    getCarList();
+	    if("logout_updata".equals(event.getMsg())){
+	    	carName= "NaN";
+	    }else if("login_again".equals(event.getMsg())){
+	    	if(items.size()>0){
+	    		carName= items.get(0);
+	    	}else{
+	    		carName= "NaN";
+	    	}
+	    }
 	}  
 	
 	
@@ -260,6 +278,7 @@ public class MainActivity extends FragmentActivity{
 	 */
 	private void getCarList(){
 		items.clear();
+		Log.d(TAG, "清除items信息：" + items.toString());  
 		for(int i=0;i<app.carDatas.size();i++){
 			items.add(app.carDatas.get(i).getNick_name());
 		}

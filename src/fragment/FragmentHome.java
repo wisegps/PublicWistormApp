@@ -273,9 +273,18 @@ public class FragmentHome extends Fragment{
 	 * @param event 
 	 */
 	public void onEventMainThread(UpdataHomeFragment event){
-		device_id = event.getMsg();
+		
 		Log.d(TAG, "收到更新信息");
-		getDeviceData(device_id);
+		 if("logout_updata".equals(event.getMsg())){
+			 tvAirScore.setText("0");
+			 tv_location.setText("");
+			 ivAirAuto.setChecked(false);
+			 ivAirLevel.setChecked(false);
+			 ivAirPower.setChecked(false);
+		 }else{
+			 device_id = event.getMsg();
+		     getDeviceData(device_id);
+		 }
 	}
 	
 	

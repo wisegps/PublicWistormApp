@@ -19,6 +19,10 @@ import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.toolkit.SystemTools;
 import com.wicare.wistorm.ui.WInputField;
 
+import de.greenrobot.event.EventBus;
+import eventbrocast.UpdataCarListEvent;
+import eventbrocast.UpdataHomeFragment;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -249,6 +253,8 @@ public class LoginActivity extends Activity{
 			application.isLogin = true;
 			if("signIn".equals(loginMsg)){
 				finish();
+				EventBus.getDefault().post(new UpdataCarListEvent("login_again")); 
+				EventBus.getDefault().post(new UpdataHomeFragment(application.carDatas.get(0).getDevice_id()));  
 			}else {
 				Intent intent_main = new Intent(LoginActivity.this,MainActivity.class);
 				startActivity(intent_main);
