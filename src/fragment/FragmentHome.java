@@ -124,11 +124,7 @@ public class FragmentHome extends Fragment{
 		airApi = new WAirApi();
 		BaseVolley.init(mContext);
 	}
-	
-	
-	
-	
-	
+
 	/**
 	 * onclick
 	 */
@@ -278,7 +274,6 @@ public class FragmentHome extends Fragment{
 	 */
 	public void onEventMainThread(UpdataHomeFragment event){
 		device_id = event.getMsg();
-		T.showLong(getActivity(), device_id);
 		Log.d(TAG, "收到更新信息");
 		getDeviceData(device_id);
 	}
