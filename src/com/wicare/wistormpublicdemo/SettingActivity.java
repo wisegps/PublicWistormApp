@@ -4,6 +4,9 @@ import xutil.ActivityCollector;
 
 import com.wicare.wistorm.toolkit.WCitySelector;
 
+import de.greenrobot.event.EventBus;
+import eventbrocast.UpdataCarListEvent;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -157,9 +160,13 @@ public class SettingActivity extends Activity {
 				editor.putString(Constant.SP_PWD, "");
 				editor.putString(Constant.SP_ACCOUNT, "");
 				editor.commit();
-				app.cust_id = null;
-				app.auth_code = null;
+				app.cust_id = "";
+				app.lat=0;
+				app.lon=0;
+				app.access_token="";
+				app.cust_name = "";
 				app.carDatas.clear();
+				updataCarList();//
 				Intent intent = new Intent(Constant.Wicare_Login_Out);
 				sendBroadcast(intent);
 				app.isLogin = false;
@@ -198,6 +205,11 @@ public class SettingActivity extends Activity {
 		ActivityCollector.removeActivity(this);
 	};
 	
-	
+	/**
+     * 刷新首页车辆list
+     */
+    private void updataCarList(){
+    	EventBus.getDefault().post(new UpdataCarListEvent("updata home car list items"));  
+    }
 
 }

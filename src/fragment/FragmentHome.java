@@ -292,7 +292,6 @@ public class FragmentHome extends Fragment{
 			@Override
 			protected void onSuccess(String response) {
 				// TODO Auto-generated method stub
-//				L.d(TAG, "获取设备返回信息：" + response);
 				parseDeviceData(response);
 			}
 		}, new OnFailure() {
@@ -342,6 +341,8 @@ public class FragmentHome extends Fragment{
 		
 		Double lat = Double.valueOf(cardata.getLat());
 		Double lon = Double.valueOf(cardata.getLon());
+		app.lat = lat;
+		app.lon = lon;
 		LatLng latLng = new LatLng(lat, lon);
 		
 		

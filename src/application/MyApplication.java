@@ -13,9 +13,6 @@ public class MyApplication extends Application{
 	
 
 	public String access_token;
-	
-	/** auth_code **/
-	public String auth_code;
 	/** 用户类别 **/
 	public int cust_type = 0;
 	/** cust_id **/
@@ -32,9 +29,7 @@ public class MyApplication extends Application{
 	public List<CarData> carDatas = new ArrayList<CarData>();
 	/** 是否登陆  **/
 	public boolean isLogin = false;
-	
-	
-	public String Token = "";
+
 	
 	
 	

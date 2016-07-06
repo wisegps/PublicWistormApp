@@ -240,19 +240,16 @@ public class MainActivity extends FragmentActivity{
 	
 	
 	
-//	boolean isResume = false;
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-//		isResume = true;
 	}
 	
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-//		isResume = false;
 		ActivityCollector.removeActivity(this);
 		EventBus.getDefault().unregister(this);
 	}
