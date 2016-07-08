@@ -67,7 +67,7 @@ public class CarAddActivity extends Activity{
 	
 	MyApplication app;
     
-    private Context mCotext;
+    private Context mContext;
     private WVehicleApi vehicleApi;
 	
 	@Override
@@ -75,7 +75,7 @@ public class CarAddActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_cars);
 		app = (MyApplication)getApplication();
-		mCotext = CarAddActivity.this;
+		mContext = CarAddActivity.this;
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
@@ -98,8 +98,8 @@ public class CarAddActivity extends Activity{
 	 * wistorm api接口网络请求初始化
 	 */
 	private void init(){
-		vehicleApi = new WVehicleApi();
-		BaseVolley.init(mCotext);
+		vehicleApi = new WVehicleApi(mContext);
+		BaseVolley.init(mContext);
 	}
 	
 	
@@ -175,13 +175,13 @@ public class CarAddActivity extends Activity{
 					JSONObject obj = new JSONObject(response);
 					
 					if("0".equals(obj.getString("status_code"))){
-						T.showShort(mCotext, "创建车辆成功！");
+						T.showShort(mContext, "创建车辆成功！");
 						setResult(FINISH_ADD_CAR_REQUEST_CODE);
 						finish();
 					}else if("8".equals(obj.getString("status_code")))
-						T.showShort(mCotext, "该车辆已被添加过");
+						T.showShort(mContext, "该车辆已被添加过");
 					else{
-						T.showShort(mCotext, "创建车辆失败！");
+						T.showShort(mContext, "创建车辆失败！");
 					}
 				} catch (JSONException e){
 					e.printStackTrace();
@@ -192,7 +192,7 @@ public class CarAddActivity extends Activity{
 			@Override
 			protected void onFailure(VolleyError error) {
 				// TODO Auto-generated method stub
-				T.showShort(mCotext, "创建车辆失败！");
+				T.showShort(mContext, "创建车辆失败！");
 			}
 		});
 	}

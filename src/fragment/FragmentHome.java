@@ -120,8 +120,8 @@ public class FragmentHome extends Fragment{
 	 * wistorm api接口网络请求初始化
 	 */
 	private void init(){
-		deviceApi = new WDeviceApi();
-		airApi = new WAirApi();
+		deviceApi = new WDeviceApi(mContext);
+		airApi = new WAirApi(mContext);
 		BaseVolley.init(mContext);
 	}
 

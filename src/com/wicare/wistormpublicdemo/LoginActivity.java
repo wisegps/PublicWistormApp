@@ -93,8 +93,8 @@ public class LoginActivity extends Activity{
 	 * wistorm api接口网络请求初始化
 	 */
 	private void init(){
-		vehicleApi = new WVehicleApi();
-		userApi = new WUserApi();
+		vehicleApi = new WVehicleApi(mContext);
+		userApi = new WUserApi(mContext);
 		BaseVolley.init(mContext);
 	}
 	

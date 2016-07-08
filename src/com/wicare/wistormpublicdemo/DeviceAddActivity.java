@@ -112,8 +112,8 @@ public class DeviceAddActivity extends Activity{
 	 * 初始化
 	 */
 	private void init(){
-		deviceApi = new WDeviceApi();
-		vehicleApi = new WVehicleApi();
+		deviceApi = new WDeviceApi(mContext);
+		vehicleApi = new WVehicleApi(mContext);
 		BaseVolley.init(mContext);
 	}
 	

@@ -14,6 +14,7 @@ import com.wicare.wistorm.http.OnSuccess;
 import com.wicare.wistorm.ui.WInputField;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View.OnClickListener;
 import android.view.View;
@@ -45,6 +46,7 @@ public class RegisterActivity extends Activity {
 	public WUserApi userApi;
 	public WCommApi commApi;
 	
+	private Context mContext;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class RegisterActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register);
-		
+		mContext = RegisterActivity.this;
 		ImageView ivBack = (ImageView) findViewById(R.id.iv_top_back);
 		ivBack.setVisibility(View.VISIBLE);
 		ivBack.setOnClickListener(onClickListener);
@@ -78,8 +80,8 @@ public class RegisterActivity extends Activity {
 	 * wistorm api接口网络请求初始化
 	 */
 	private void init(){
-		userApi = new WUserApi();
-		commApi = new WCommApi();
+		userApi = new WUserApi(mContext);
+		commApi = new WCommApi(mContext);
 		BaseVolley.init(RegisterActivity.this);
 	}
 	

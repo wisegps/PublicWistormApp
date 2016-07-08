@@ -94,7 +94,7 @@ public class MyCarsActivity extends Activity{
 	 * wistorm api接口网络请求初始化
 	 */
 	private void init(){
-		vehicleApi = new WVehicleApi();
+		vehicleApi = new WVehicleApi(mContext);
 		BaseVolley.init(mContext);
 	}
 	
